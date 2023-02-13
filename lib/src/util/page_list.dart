@@ -1,3 +1,5 @@
+import 'package:booking_app/src/pages/about/about_ld.dart';
+import 'package:booking_app/src/pages/about/contact_ld.dart';
 import 'package:booking_app/src/pages/account.dart';
 import 'package:booking_app/src/pages/booking/cancel_booking.dart';
 import 'package:booking_app/src/pages/home.dart';
@@ -14,7 +16,9 @@ final List<Widget> pages = <Widget>[
   const MyAccount(),
   const RegisterAttendance(),
   const RescheduleBooking(),
-  const CancelBooking()
+  const CancelBooking(),
+  const AboutLD(),
+  const ContactLD(),
 ];
 
 class PageDestination {
@@ -25,6 +29,7 @@ class PageDestination {
   final Widget selectedIcon;
 }
 
+// Core pages shown in the bottom nav bar and top of the side drawer
 const List<PageDestination> pageDestinations = <PageDestination>[
   PageDestination(
       'Home',
@@ -56,6 +61,7 @@ const List<PageDestination> pageDestinations = <PageDestination>[
       )),
 ];
 
+// Pages related to bookings, shown in the side drawer
 const List<PageDestination> bookingDestinations = <PageDestination>[
   PageDestination(
       'Register Attendance',
@@ -76,6 +82,24 @@ const List<PageDestination> bookingDestinations = <PageDestination>[
       Icon(Icons.cancel_schedule_send_outlined),
       Icon(
         Icons.cancel_schedule_send,
+        color: Colors.white,
+      )),
+];
+
+// Pages related to help & about, shown in the side drawer
+const List<PageDestination> aboutDestinations = <PageDestination>[
+  PageDestination(
+      'About L&D',
+      Icon(Icons.info_outlined),
+      Icon(
+        Icons.info,
+        color: Colors.white,
+      )),
+  PageDestination(
+      'Contact L&D',
+      Icon(Icons.message_outlined),
+      Icon(
+        Icons.message,
         color: Colors.white,
       )),
 ];
