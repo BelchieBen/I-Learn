@@ -8,8 +8,19 @@ class CancelBooking extends StatefulWidget {
 }
 
 class _CancelBooking extends State<CancelBooking> {
+  AppBar appHeader() {
+    return AppBar(
+      title: const Text("Cancel a Booking"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("Cancel Booking");
+    return Scaffold(
+      appBar: appHeader(),
+      body: const Center(
+        child: Text("Cancel Booking"),
+      ),
+    );
   }
 }

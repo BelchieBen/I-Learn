@@ -15,12 +15,17 @@ class _AppScaffoldState extends State<AppScaffold> {
   late bool showNavigationDrawer;
 
   void handleScreenChanged(int selectedScreen) {
-    print("Index");
-    print(selectedScreen);
-    print(pages.elementAt(selectedScreen));
-    setState(() {
-      screenIndex = selectedScreen;
-    });
+    if (selectedScreen < 4) {
+      setState(() {
+        screenIndex = selectedScreen;
+      });
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => pages.elementAt(selectedScreen),
+        ),
+      );
+    }
   }
 
   Widget buildAppScaffold() {

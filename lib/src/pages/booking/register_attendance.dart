@@ -8,8 +8,19 @@ class RegisterAttendance extends StatefulWidget {
 }
 
 class _RegisterAttendanceState extends State<RegisterAttendance> {
+  AppBar appHeader() {
+    return AppBar(
+      title: const Text("Register Attendance"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("Register Attendance");
+    return Scaffold(
+      appBar: appHeader(),
+      body: const Center(
+        child: Text("Register Attendance"),
+      ),
+    );
   }
 }

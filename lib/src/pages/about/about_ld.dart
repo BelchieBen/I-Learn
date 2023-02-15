@@ -8,8 +8,19 @@ class AboutLD extends StatefulWidget {
 }
 
 class _AboutLDState extends State<AboutLD> {
+  AppBar appHeader() {
+    return AppBar(
+      title: const Text("About L&D"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("About L&D");
+    return Scaffold(
+      appBar: appHeader(),
+      body: const Center(
+        child: Text("About L&D"),
+      ),
+    );
   }
 }

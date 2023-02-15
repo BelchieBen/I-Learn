@@ -8,8 +8,19 @@ class ContactLD extends StatefulWidget {
 }
 
 class _AboutLDState extends State<ContactLD> {
+  AppBar appHeader() {
+    return AppBar(
+      title: const Text("Contact L&D"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("About L&D");
+    return Scaffold(
+      appBar: appHeader(),
+      body: const Center(
+        child: Text("Contact L&D"),
+      ),
+    );
   }
 }

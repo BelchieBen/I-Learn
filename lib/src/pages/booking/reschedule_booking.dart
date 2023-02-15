@@ -8,8 +8,19 @@ class RescheduleBooking extends StatefulWidget {
 }
 
 class _RescheduleBookingState extends State<RescheduleBooking> {
+  AppBar appHeader() {
+    return AppBar(
+      title: const Text("Reschedule a Booking"),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Text("Reschedule Booking");
+    return Scaffold(
+      appBar: appHeader(),
+      body: const Center(
+        child: Text("Reschedule Booking"),
+      ),
+    );
   }
 }

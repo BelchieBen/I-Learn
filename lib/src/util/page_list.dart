@@ -71,14 +71,14 @@ const List<PageDestination> bookingDestinations = <PageDestination>[
         color: Colors.white,
       )),
   PageDestination(
-      'Reschedule Booking',
+      'Reschedule a Booking',
       Icon(Icons.swap_vert_circle_outlined),
       Icon(
         Icons.swap_vert_circle,
         color: Colors.white,
       )),
   PageDestination(
-      'Cancel Booking',
+      'Cancel a Booking',
       Icon(Icons.cancel_schedule_send_outlined),
       Icon(
         Icons.cancel_schedule_send,
