@@ -1,3 +1,4 @@
+import 'package:booking_app/src/pages/courses/course_detail.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -80,20 +81,25 @@ class _HomeState extends State<Home> {
                           FractionallySizedBox(
                             widthFactor: 0.49,
                             child: Card(
+                              color: Colors.white,
                               clipBehavior: Clip.none,
                               child: InkWell(
-                                splashColor:
-                                    const Color.fromRGBO(92, 199, 208, 0.2),
                                 onTap: () {
-                                  print('Card tapped.');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CourseDetail(course: item),
+                                      ));
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 0, 12),
                                   child: Column(
                                     children: [
                                       Image.asset(
                                         item["image"]!,
-                                        width: 120,
+                                        width: 140,
                                       ),
                                       Column(
                                         crossAxisAlignment:
