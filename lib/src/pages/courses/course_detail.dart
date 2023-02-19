@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../components/inputs/text_form_input.dart';
 
 class CourseDetail extends StatefulWidget {
