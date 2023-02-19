@@ -1,4 +1,4 @@
-import 'package:booking_app/src/pages/courses/course_detail.dart';
+import 'package:booking_app/src/pages/booking/book_course.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
