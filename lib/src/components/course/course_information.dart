@@ -23,20 +23,16 @@ class _CourseInformationState extends State<CourseInformation> {
       children: [
         Image.asset(
           widget.course["image"]!,
-          width: 180,
+          width: 160,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.course["title"]!,
-                  style: const TextStyle(fontSize: 18)),
-              Text(widget.course["altText"]!),
-              const Text("Virtual Online: Not available"),
-              const Text("Suitable for everyone"),
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.course["title"]!, style: const TextStyle(fontSize: 18)),
+            Text(widget.course["altText"]!),
+            const Text("Virtual Online: Not available"),
+            const Text("Suitable for everyone"),
+          ],
         ),
       ],
     );

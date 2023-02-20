@@ -1,3 +1,4 @@
+import 'package:booking_app/src/components/course/booking_stepper.dart';
 import 'package:booking_app/src/components/course/course_information.dart';
 import 'package:booking_app/src/components/inputs/date_selector.dart';
 import 'package:flutter/material.dart';
@@ -29,18 +30,10 @@ class _CourseDetailState extends State<CourseDetail> {
           builder: (BuildContext context, BoxConstraints viewportConstraints) {
         return SingleChildScrollView(
           child: ConstrainedBox(
-            constraints:
-                BoxConstraints(minHeight: viewportConstraints.maxHeight),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  CourseInformation(course: widget.course),
-                  const DateSelector(),
-                  const BookingForm()
-                ],
-              ),
-            ),
+            constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+                maxHeight: viewportConstraints.maxHeight),
+            child: BookingStepper(course: widget.course),
           ),
         );
       }),
