@@ -7,14 +7,14 @@ import '../inputs/text_form_input.dart';
  * The text fields and submit button on the last step of the booking process
  */
 class BookingForm extends StatefulWidget {
-  const BookingForm({super.key});
+  final GlobalKey<FormState> formKey;
+  const BookingForm({super.key, required this.formKey});
 
   @override
   State<BookingForm> createState() => _BookingFormState();
 }
 
 class _BookingFormState extends State<BookingForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {
@@ -30,44 +30,21 @@ class _BookingFormState extends State<BookingForm> {
     }
 
     return Form(
-      key: _formKey,
+      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TextFormInput(
+        children: const [
+          TextFormInput(
             labelText: "How has this training been identified?",
             numLines: 3,
           ),
-          const TextFormInput(
+          TextFormInput(
             labelText: "How will you apply the learning in your role?",
             numLines: 3,
           ),
-          const TextFormInput(
+          TextFormInput(
             labelText: "How will you measure the success of this learning?",
             numLines: 3,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
-            child: ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith(getColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(12),
-                      ),
-                    ),
-                  )),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Process data.
-                }
-              },
-              child: const Text(
-                'Submit',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
           ),
         ],
       ),

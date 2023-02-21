@@ -16,9 +16,30 @@ class BookingStepper extends StatefulWidget {
 
 class _BookingStepperState extends State<BookingStepper> {
   int _index = 0;
+  int selectedDateIndex = 0;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final List<String> dates = [
+    "12-01-2022 9:00 - 12-01-2022 17:00",
+    "24-02-2022 9:00 - 24-02-2022 17:00",
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final isLastStep = _index == 2 - 1;
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return const Color.fromRGBO(139, 147, 154, 1);
+      }
+      return const Color.fromRGBO(182, 187, 193, 1);
+    }
+
     return Theme(
       data: ThemeData(
         canvasColor: Colors.transparent,
@@ -28,6 +49,12 @@ class _BookingStepperState extends State<BookingStepper> {
             ),
       ),
       child: Stepper(
+        controlsBuilder: (BuildContext context, ControlsDetails details) {
+          return Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: stepperControlls(details, isLastStep, getColor),
+          );
+        },
         currentStep: _index,
         type: StepperType.horizontal,
         elevation: 0,
@@ -43,6 +70,11 @@ class _BookingStepperState extends State<BookingStepper> {
             setState(() {
               _index += 1;
             });
+          }
+          if (isLastStep) {
+            if (formKey.currentState!.validate()) {
+              // Process data.
+            }
           }
         },
         onStepTapped: (int index) {
@@ -60,8 +92,9 @@ class _BookingStepperState extends State<BookingStepper> {
                     : StepState.indexed,
             isActive: _index >= 0,
             content: Container(
-                alignment: Alignment.centerLeft,
-                child: const Text('Content for Step 1')),
+              alignment: Alignment.centerLeft,
+              child: dateSelector(),
+            ),
           ),
           Step(
             title: const Text('Submit Booking'),
@@ -74,13 +107,76 @@ class _BookingStepperState extends State<BookingStepper> {
             content: Column(
               children: [
                 CourseInformation(course: widget.course),
-                const DateSelector(),
-                const BookingForm()
+                DateSelector(
+                  date: dates[selectedDateIndex],
+                ),
+                BookingForm(
+                  formKey: formKey,
+                )
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Column dateSelector() {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: dates.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(12),
+                ),
+              ),
+              title: Text(dates[index]),
+              trailing: selectedDateIndex == index
+                  ? const Icon(
+                      Icons.check_circle_outline,
+                      color: Color.fromRGBO(92, 199, 208, 1),
+                    )
+                  : null,
+              tileColor: selectedDateIndex == index
+                  ? const Color.fromRGBO(210, 246, 250, 1)
+                  : null,
+              onTap: () {
+                setState(() {
+                  selectedDateIndex = index;
+                });
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Row stepperControlls(ControlsDetails details, bool isLastStep,
+      Color getColor(Set<MaterialState> states)) {
+    return Row(
+      children: [
+        Expanded(
+            child: ElevatedButton(
+                onPressed: details.onStepContinue,
+                child: Text(isLastStep ? 'Submit' : 'Next'))),
+        const SizedBox(
+          width: 12,
+        ),
+        if (_index != 0)
+          Expanded(
+              child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.resolveWith(getColor),
+                  ),
+                  onPressed: details.onStepCancel,
+                  child: const Text('Back')))
+      ],
     );
   }
 }
