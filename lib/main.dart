@@ -7,6 +7,7 @@ void main() {
       title: 'NavigationDrawer Example',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+          fontFamily: 'Gilroy Medium',
           useMaterial3: true,
           primaryColor: const Color.fromRGBO(92, 199, 208, 1),
           navigationBarTheme: const NavigationBarThemeData(
