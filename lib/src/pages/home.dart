@@ -1,4 +1,5 @@
 import 'package:booking_app/src/pages/booking/book_course.dart';
+import 'package:booking_app/src/pages/courses/course_detail.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -88,9 +89,9 @@ class _HomeState extends State<Home> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            CourseDetail(course: item),
-                                      ));
+                                          builder: (context) =>
+                                              // CourseDetail(course: item),
+                                              CourseDetailPage(course: item)));
                                 },
                                 child: Padding(
                                   padding:
