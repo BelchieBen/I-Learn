@@ -1,21 +1,18 @@
 import 'package:booking_app/src/components/course/booking_stepper.dart';
-import 'package:booking_app/src/components/course/course_information.dart';
-import 'package:booking_app/src/components/inputs/date_selector.dart';
 import 'package:flutter/material.dart';
-import '../../components/forms/booking_form.dart';
 
-class CourseDetail extends StatefulWidget {
+class CourseBookingPage extends StatefulWidget {
   final Map<String, String> course;
-  const CourseDetail({
+  const CourseBookingPage({
     super.key,
     required this.course,
   });
 
   @override
-  State<CourseDetail> createState() => _CourseDetailState();
+  State<CourseBookingPage> createState() => _CourseBookingPageState();
 }
 
-class _CourseDetailState extends State<CourseDetail> {
+class _CourseBookingPageState extends State<CourseBookingPage> {
   AppBar appHeader() {
     return AppBar(
       title: const Text("Book a Session"),

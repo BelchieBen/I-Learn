@@ -1,6 +1,5 @@
 import 'package:booking_app/src/components/course/course_information.dart';
 import 'package:booking_app/src/components/forms/booking_form.dart';
-import 'package:booking_app/src/components/inputs/date_selector.dart';
 import 'package:flutter/material.dart';
 
 class BookingStepper extends StatefulWidget {
@@ -107,8 +106,9 @@ class _BookingStepperState extends State<BookingStepper> {
             content: Column(
               children: [
                 CourseInformation(course: widget.course),
-                DateSelector(
-                  date: dates[selectedDateIndex],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                  child: Text(dates[selectedDateIndex]),
                 ),
                 BookingForm(
                   formKey: formKey,
