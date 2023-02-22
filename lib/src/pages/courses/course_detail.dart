@@ -189,8 +189,16 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     ),
                     Table(
                       border: const TableBorder(
-                          horizontalInside: BorderSide(
-                              color: Color.fromRGBO(110, 120, 129, 1))),
+                        horizontalInside: BorderSide(
+                          color: Color.fromRGBO(110, 120, 129, 1),
+                        ),
+                      ),
+                      columnWidths: const <int, TableColumnWidth>{
+                        0: IntrinsicColumnWidth(),
+                        1: IntrinsicColumnWidth(),
+                        2: IntrinsicColumnWidth(),
+                        3: IntrinsicColumnWidth(),
+                      },
                       children: <TableRow>[
                         TableRow(
                           children: [
@@ -217,7 +225,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                     TableCellVerticalAlignment.middle,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                      const EdgeInsets.fromLTRB(4, 8, 4, 8),
                                   child: Row(
                                     children: [
                                       Image.asset(
@@ -238,7 +246,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                     TableCellVerticalAlignment.middle,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                      const EdgeInsets.fromLTRB(4, 8, 4, 8),
                                   child: Text(learningItem["title"]!),
                                 ),
                               ),
@@ -247,7 +255,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                     TableCellVerticalAlignment.middle,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                      const EdgeInsets.fromLTRB(4, 8, 4, 8),
                                   child: Text(learningItem["source"]!),
                                 ),
                               ),
@@ -256,7 +264,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                     TableCellVerticalAlignment.middle,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                      const EdgeInsets.fromLTRB(4, 8, 4, 8),
                                   child: Text(learningItem["duration"]!),
                                 ),
                               ),
@@ -266,17 +274,19 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  // CourseDetail(course: item),
-                                  CourseBookingPage(course: widget.course),
-                            ),
-                          );
-                        },
-                        child: Text("Book A Session"))
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                // CourseDetail(course: item),
+                                CourseBookingPage(course: widget.course),
+                          ),
+                        );
+                      },
+                      child: Text("Book A Session"),
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
