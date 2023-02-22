@@ -15,21 +15,49 @@ class _HomeState extends State<Home> {
       "title": "Time Management",
       "image": "images/FastEasyReporting.png",
       "altText": "16 Lessons",
+      "description":
+          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
+      "quoteText":
+          "I apply most of the techniques I learnt in training in both my personal and professional life",
+      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
+      "location": "Ruddington",
     },
     {
-      "title": "Risk Management",
-      "image": "images/ReportingExecutiveDashboards.png",
+      "title": "Coaching",
+      "image": "images/BackToWork.png",
       "altText": "8 Lessons",
+      "description":
+          "Coaching is a useful way of developing people's skills and abilities, and of boosting performance. It can also help deal with issues and challenges before they become major problems. Coaches in the workplace do not have to be counsellors, therapists, or trainers – they simply facilitate learning.",
+      "quoteText":
+          "Coaching is releasing a person's potential to maximise their own performance. It is helping them to learn rather than teaching them",
+      "tags": "Duration: 4 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Article.png,Podcast.png",
+      "location": "Ruddington",
     },
     {
-      "title": "Effective Planning",
-      "image": "images/RiskAssessmentDocumentation.png",
-      "altText": "2 Days In Person",
-    },
-    {
-      "title": "Meeting Prep",
-      "image": "images/CalendersReminders.png",
+      "title": "Communication Skills",
+      "image": "images/ConflictResolution.png",
       "altText": "1 Day In Person",
+      "description":
+          "Communication and assertiveness are vital both in our personal and our professional lives. Not only does effective communication allow us to be more productive and efficient, it also helps us develop strong working relationships, essential for developing trust. How we communicate affects both our colleagues and our customers. Effective communication could even be the difference between closing a sale and missing out!",
+      "quoteText":
+          "I found it very useful to go through the different scenarios and apply the 'assertive', 'passive' and'aggressive' communication types to anticipate the responses. It helped me to understand how to frame my response in an 'assertive' way to get the best result.",
+      "tags": "Duration: 1 Day,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Video.png,Article.png,TopTips.png",
+      "location": "Ruddington",
+    },
+    {
+      "title": "Presentation Skills",
+      "image": "images/AutomatedRecordKeeping.png",
+      "altText": "1 Day In Person",
+      "description":
+          "Most of us feel uncomfortable or nervous when asked to present, yet at some point during our careers, we will all have to do it. Anyone can give a good presentation, all it takes are some key tools and techniques and most important of all, good preparation and practise! Here we aim not only to develop your presentation ability but also equip you with some key tools to manage your confidence and give compelling presentations!",
+      "quoteText":
+          "I have already noticed a difference in my presentations and the trainer provided further tools to support in my role. The training has given me the tools I need to deliver effective presentations and enable my confidence to grow when I find myself faced with this type of task.",
+      "tags": "Duration: 1 Day,Maximum Attendees: 6,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Video.png,Article.png",
+      "location": "Pre-Recorded Sessions",
     },
   ];
 
