@@ -1,3 +1,4 @@
+import 'package:booking_app/src/pages/courses/search_courses.dart';
 import 'package:booking_app/src/util/page_list.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   int screenIndex = 0;
+  bool isSearching = false;
   late bool showNavigationDrawer;
 
   void handleScreenChanged(int selectedScreen) {
@@ -40,7 +42,35 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   AppBar appHeader() {
     return AppBar(
-      title: const Text("I-Learn"),
+      title: isSearching
+          ? const TextField(
+              decoration: InputDecoration(
+                  hintText: "Search Courses",
+                  hintStyle: TextStyle(fontSize: 20),
+                  border: InputBorder.none),
+            )
+          : const Text("I-Learn"),
+      leading: isSearching
+          ? IconButton(
+              onPressed: () {
+                setState(() {
+                  isSearching = false;
+                });
+              },
+              icon: const Icon(Icons.arrow_back))
+          : null,
+      actions: [
+        screenIndex == 1 && !isSearching
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    isSearching = true;
+                  });
+                },
+                icon: const Icon(Icons.search),
+              )
+            : const SizedBox(),
+      ],
     );
   }
 
