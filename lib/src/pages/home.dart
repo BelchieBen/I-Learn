@@ -22,6 +22,7 @@ class _HomeState extends State<Home> {
       "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
       "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
       "location": "Ruddington",
+      "showBookBtn": "true",
     },
     {
       "title": "Coaching",
@@ -34,6 +35,7 @@ class _HomeState extends State<Home> {
       "tags": "Duration: 4 Hours,Maximum Attendees: 12,Suitable for everyone",
       "learningContents": "FaceToFace.png,Article.png,Podcast.png",
       "location": "Ruddington",
+      "showBookBtn": "true",
     },
     {
       "title": "Communication Skills",
@@ -46,6 +48,7 @@ class _HomeState extends State<Home> {
       "tags": "Duration: 1 Day,Maximum Attendees: 12,Suitable for everyone",
       "learningContents": "FaceToFace.png,Video.png,Article.png,TopTips.png",
       "location": "Ruddington",
+      "showBookBtn": "true",
     },
     {
       "title": "Presentation Skills",
@@ -58,6 +61,7 @@ class _HomeState extends State<Home> {
       "tags": "Duration: 1 Day,Maximum Attendees: 6,Suitable for everyone",
       "learningContents": "FaceToFace.png,Video.png,Article.png",
       "location": "Pre-Recorded Sessions",
+      "showBookBtn": "true",
     },
   ];
 
@@ -65,23 +69,50 @@ class _HomeState extends State<Home> {
     {
       "title": "COSHH Training",
       "image": "images/COSHH.png",
-      "altText": "Supporting line text lorem ipsum dolor sit amet, consectetur",
+      "location": "Ruddington",
+      "altText": "30-03-2022 9:00 - 30-03-2022 17:00",
+      "description":
+          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
+      "quoteText":
+          "I apply most of the techniques I learnt in training in both my personal and professional life",
+      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
       "title": "Health & Safety",
       "image": "images/FirstAid.png",
-      "altText": "Supporting line text lorem ipsum dolor sit amet, consectetur",
+      "location": "MS Teams",
+      "altText": "20-03-2022 9:00 - 23-03-2022 17:00",
+      "description":
+          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
+      "quoteText":
+          "I apply most of the techniques I learnt in training in both my personal and professional life",
+      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
       "title": "Food Heigine",
       "image": "images/FoodSafetyLevel.png",
-      "altText": "Supporting line text lorem ipsum dolor sit amet, consectetur",
+      "location": "Ruddington",
+      "altText": "09-03-2022 9:00 - 09-03-2022 11:00",
+      "description":
+          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
+      "quoteText":
+          "I apply most of the techniques I learnt in training in both my personal and professional life",
+      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
       "title": "Asbestos Awareness",
       "image": "images/AsbestosAwareness.png",
-      "altText":
-          "Supporting line text lorem ipsum dolor sit amet, consectetur Will you show up?",
+      "location": "Pre-Recorded Sessions",
+      "altText": "24-03-2022 9:00 - 25-03-2022 17:00",
+      "description":
+          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
+      "quoteText":
+          "I apply most of the techniques I learnt in training in both my personal and professional life",
+      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
   ];
 
@@ -115,11 +146,13 @@ class _HomeState extends State<Home> {
                               child: InkWell(
                                 onTap: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              // CourseDetail(course: item),
-                                              CourseDetailPage(course: item)));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          // CourseDetail(course: item),
+                                          CourseDetailPage(course: item),
+                                    ),
+                                  );
                                 },
                                 child: Padding(
                                   padding:
@@ -163,12 +196,39 @@ class _HomeState extends State<Home> {
                         width: 60,
                       ),
                       title: Text(item["title"]!),
-                      subtitle: Text(
-                        item["altText"]!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item["altText"]!),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                size: 18,
+                                color: Color.fromRGBO(139, 147, 151, 1),
+                              ),
+                              Text(
+                                item["location"]!,
+                                style: const TextStyle(
+                                  color: Color.fromRGBO(139, 147, 151, 1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      isThreeLine: true,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                // CourseDetail(course: item),
+                                CourseDetailPage(course: item),
+                          ),
+                        );
+                      },
                     ),
                 ],
               ),

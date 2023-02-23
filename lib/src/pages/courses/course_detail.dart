@@ -1,11 +1,13 @@
 import 'package:booking_app/src/components/course/self_directed_learning_table.dart';
 import 'package:booking_app/src/pages/booking/book_course.dart';
 import 'package:flutter/material.dart';
+import 'package:string_validator/string_validator.dart';
 
 class CourseDetailPage extends StatefulWidget {
   final Map<String, String> course;
   const CourseDetailPage({super.key, required this.course});
 
+  @override
   State<CourseDetailPage> createState() => _CourseDetailPageState();
 }
 
@@ -23,6 +25,8 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     final tags = widget.course["tags"]!.split(",");
     final contentTypes = widget.course["learningContents"]!.split(",");
     final quoteText = widget.course["quoteText"]!;
+
+    print(widget.course["showBookBtn"]);
 
     return Scaffold(
       appBar: appHeader(),
@@ -53,7 +57,9 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     courseLocation(),
                     const SelfDirectedLearningTable(),
                     const SizedBox(height: 16),
-                    bookSessionButton(context),
+                    widget.course["showBookBtn"] != null
+                        ? bookSessionButton(context)
+                        : const SizedBox(),
                     const SizedBox(height: 16),
                   ],
                 ),
