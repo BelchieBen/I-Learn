@@ -1,3 +1,5 @@
+import 'package:booking_app/src/components/course/course_tags.dart';
+import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:flutter/material.dart';
 
 class SearchCourses extends StatefulWidget {
@@ -10,11 +12,35 @@ class SearchCourses extends StatefulWidget {
 class _SearchCoursesState extends State<SearchCourses> {
   final courses = [
     {
-      "title": "Courageous Conversations",
+      "title": "Difficult Conversations",
       "image": "images/CompanyNews.png",
       "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
-    }
+      "tags": "Duration: 2 Hours,Suitable for everyone",
+    },
+    {
+      "title": "Coaching",
+      "image": "images/BackToWork.png",
+      "learningContents": "FaceToFace.png,Video.png,Article.png",
+      "tags": "Duration: 2 Hours,Suitable for everyone",
+    },
+    {
+      "title": "Computer Safety",
+      "image": "images/CentralisedSafety Data.png",
+      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
+      "tags": "Duration: 2 Hours,Suitable for everyone",
+    },
+    {
+      "title": "Team Collaboration",
+      "image": "images/Collaboration.png",
+      "learningContents": "EBook.png,ELearning.png,TopTips.png,Online.png",
+      "tags": "Duration: 2 Hours,Suitable for everyone",
+    },
+    {
+      "title": "First Aid Training",
+      "image": "images/FirstAid.png",
+      "learningContents": "Video.png,Podcast.png,TopTips.png",
+      "tags": "Duration: 2 Hours,Suitable for everyone",
+    },
   ];
 
   @override
@@ -52,21 +78,44 @@ class _SearchCoursesState extends State<SearchCourses> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              course["image"]!,
-                              height: 120,
-                            ),
-                            Column(
-                              children: [
-                                Text(course["title"]!),
-                                // TODO add the tags and learning content
-                              ],
-                            )
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                course["image"]!,
+                                width: 90,
+                                height: 90,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    course["title"]!,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  LearningTypes(
+                                    contentTypes:
+                                        course["learningContents"]!.split(","),
+                                  ),
+                                  CourseTags(
+                                    tags: course["tags"]!.split(","),
+                                    tagSize: 11,
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                      )
+                      ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text("Courses for you division"),
+                    const Divider(),
                   ],
                 ),
               ),

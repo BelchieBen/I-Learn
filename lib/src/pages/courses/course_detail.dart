@@ -1,3 +1,5 @@
+import 'package:booking_app/src/components/course/course_tags.dart';
+import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:booking_app/src/components/course/self_directed_learning_table.dart';
 import 'package:booking_app/src/pages/booking/book_course.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +52,11 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     courseTitle(),
-                    learningTypes(contentTypes),
-                    courseTags(tags),
+                    LearningTypes(contentTypes: contentTypes),
+                    CourseTags(
+                      tags: tags,
+                      tagSize: 14,
+                    ),
                     courseDescription(),
                     courseQuote(quoteText),
                     courseLocation(),
@@ -75,54 +80,6 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     return Text(
       widget.course["title"]!,
       style: const TextStyle(fontSize: 24),
-    );
-  }
-
-  Padding learningTypes(List<String> contentTypes) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-      child: Wrap(
-        spacing: 8,
-        children: [
-          for (var type in contentTypes)
-            Image.asset(
-              "images/contentImages/$type",
-              height: 25,
-            ),
-        ],
-      ),
-    );
-  }
-
-  Padding courseTags(List<String> tags) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-      child: Wrap(
-        children: [
-          for (var tag in tags)
-            Wrap(
-              children: [
-                Text(
-                  tag,
-                  style: const TextStyle(
-                    color: Color.fromRGBO(200, 0, 99, 1),
-                  ),
-                ),
-                tag != tags.last
-                    ? const Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                        child: Text(
-                          "|",
-                          style: TextStyle(
-                            color: Color.fromRGBO(200, 0, 99, 1),
-                          ),
-                        ),
-                      )
-                    : const Text(""),
-              ],
-            ),
-        ],
-      ),
     );
   }
 
