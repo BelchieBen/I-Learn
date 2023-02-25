@@ -18,3 +18,8 @@ jobs:
       - run: flutter pub get
       #- run: flutter test
       - run: flutter build apk --debug
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-v1.0.${{github.run_number}}
+          path: "build/app/outputs/apk/debug/app-debug.apk"
