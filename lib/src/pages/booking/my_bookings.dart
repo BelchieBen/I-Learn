@@ -15,6 +15,7 @@ class _MyBookingState extends State<MyBookings> {
       "image": "images/CompanyNews.png",
       "status": "Approved",
       "date": "20/04/2022 9:00",
+      "trainer": "Callum Davidson",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
@@ -22,6 +23,7 @@ class _MyBookingState extends State<MyBookings> {
       "image": "images/Collaboration.png",
       "status": "Pending",
       "date": "26/09/2022 13:30",
+      "trainer": "Jo Harris",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
@@ -29,6 +31,7 @@ class _MyBookingState extends State<MyBookings> {
       "image": "images/FoodSafetyLevel.png",
       "status": "Declined",
       "date": "04/07/2022 11:00",
+      "trainer": "Rebecca Jackson",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
   ];
@@ -109,7 +112,7 @@ class _MyBookingState extends State<MyBookings> {
                   Text(
                     booking["title"]!,
                     style: const TextStyle(
-                      fontSize: 17,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -144,9 +147,24 @@ class _MyBookingState extends State<MyBookings> {
                     children: [
                       Text(
                         booking["title"]!,
-                        style: const TextStyle(fontSize: 17),
+                        style: const TextStyle(fontSize: 18),
                       ),
-                      Text(booking["date"]!),
+                      Text(
+                        booking["date"]!,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            "images/person.png",
+                            height: 19,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(booking["trainer"]!),
+                        ],
+                      ),
                       LearningTypes(
                         contentTypes:
                             booking["learningTypes"]!.split(",").toList(),
