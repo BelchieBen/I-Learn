@@ -2,10 +2,13 @@ on:
   pull_request:
     branches:
       - master
-name: "Build"
+  push:
+    branches:
+      - master
+name: "Build & Release"
 jobs:
   build:
-    name: Build
+    name: Build & Release
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
@@ -18,8 +21,9 @@ jobs:
       - run: flutter pub get
       #- run: flutter test
       - run: flutter build apk --debug
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
         with:
-          name: build-v1.0.${{github.run_number}}
-          path: "build/app/outputs/apk/debug/app-debug.apk"
+          artifacts: "build/app/outputs/apk/debug/*"
+          tag: v1.0.${{github.run_number}}
+          token: ${{secrets.TOKEN}}
