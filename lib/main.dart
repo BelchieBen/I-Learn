@@ -23,6 +23,14 @@ void main() {
             fontFamily: 'Gilroy Medium',
             useMaterial3: true,
             primaryColor: const Color.fromRGBO(92, 199, 208, 1),
+            appBarTheme: AppBarTheme(
+              backgroundColor:
+                  MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                return states.contains(MaterialState.scrolledUnder)
+                    ? Colors.indigo
+                    : Colors.blue;
+              }),
+            ),
             navigationBarTheme: const NavigationBarThemeData(
               indicatorColor: Color.fromRGBO(92, 199, 208, 1),
               backgroundColor: Color.fromRGBO(244, 245, 246, 1),

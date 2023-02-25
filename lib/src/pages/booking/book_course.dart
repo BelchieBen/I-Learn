@@ -1,6 +1,8 @@
 import 'package:booking_app/src/components/course/booking_stepper.dart';
 import 'package:flutter/material.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class CourseBookingPage extends StatefulWidget {
   final Map<String, String> course;
   const CourseBookingPage({
@@ -15,8 +17,8 @@ class CourseBookingPage extends StatefulWidget {
 class _CourseBookingPageState extends State<CourseBookingPage> {
   AppBar appHeader() {
     return AppBar(
-      title: const Text("Book a Session"),
-    );
+        title: const Text("Book a Session"),
+        backgroundColor: resolveAppHeaderColor());
   }
 
   @override

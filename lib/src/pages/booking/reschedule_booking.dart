@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class RescheduleBooking extends StatefulWidget {
   const RescheduleBooking({super.key});
 
@@ -11,6 +13,7 @@ class _RescheduleBookingState extends State<RescheduleBooking> {
   AppBar appHeader() {
     return AppBar(
       title: const Text("Reschedule a Booking"),
+      backgroundColor: resolveAppHeaderColor(),
     );
   }
 

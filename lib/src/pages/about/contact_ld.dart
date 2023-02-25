@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class ContactLD extends StatefulWidget {
   const ContactLD({super.key});
 
@@ -11,6 +13,7 @@ class _AboutLDState extends State<ContactLD> {
   AppBar appHeader() {
     return AppBar(
       title: const Text("Contact L&D"),
+      backgroundColor: resolveAppHeaderColor(),
     );
   }
 
