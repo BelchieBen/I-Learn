@@ -16,6 +16,7 @@ class _MyBookingState extends State<MyBookings> {
       "status": "Approved",
       "date": "20/04/2022 9:00",
       "trainer": "Callum Davidson",
+      "location": "Ruddington",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
@@ -24,6 +25,7 @@ class _MyBookingState extends State<MyBookings> {
       "status": "Pending",
       "date": "26/09/2022 13:30",
       "trainer": "Jo Harris",
+      "location": "Ruddington",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
     {
@@ -32,6 +34,7 @@ class _MyBookingState extends State<MyBookings> {
       "status": "Declined",
       "date": "04/07/2022 11:00",
       "trainer": "Rebecca Jackson",
+      "location": "MS Teams",
       "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
     },
   ];
@@ -102,6 +105,9 @@ class _MyBookingState extends State<MyBookings> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         elevation: 2,
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -155,14 +161,35 @@ class _MyBookingState extends State<MyBookings> {
                       ),
                       Row(
                         children: [
-                          Image.asset(
-                            "images/person.png",
-                            height: 19,
+                          const Icon(
+                            Icons.person,
+                            size: 18,
+                            color: Color.fromRGBO(139, 147, 151, 1),
+                          ),
+                          Text(
+                            booking["trainer"]!,
+                            style: const TextStyle(
+                              color: Color.fromRGBO(139, 147, 151, 1),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 18,
+                            color: Color.fromRGBO(139, 147, 151, 1),
                           ),
                           const SizedBox(
                             width: 4,
                           ),
-                          Text(booking["trainer"]!),
+                          Text(
+                            booking["location"]!,
+                            style: const TextStyle(
+                              color: Color.fromRGBO(139, 147, 151, 1),
+                            ),
+                          ),
                         ],
                       ),
                       LearningTypes(
