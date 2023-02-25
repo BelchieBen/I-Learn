@@ -5,6 +5,8 @@ on:
 name: "Release"
 jobs:
   release:
+    name: Release
+    runs-on: macos-latest
     steps:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
