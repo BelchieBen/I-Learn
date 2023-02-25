@@ -2,10 +2,10 @@ on:
   pull_request:
     branches:
       - master
-name: "Build & Release"
+name: "Build & Test"
 jobs:
   build:
-    name: Build & Release
+    name: Build & Test
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
