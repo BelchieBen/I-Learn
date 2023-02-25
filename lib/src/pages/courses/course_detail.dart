@@ -5,6 +5,8 @@ import 'package:booking_app/src/pages/booking/book_course.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class CourseDetailPage extends StatefulWidget {
   final Map<String, String> course;
   const CourseDetailPage({super.key, required this.course});
@@ -19,6 +21,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
   AppBar appHeader() {
     return AppBar(
       title: const Text("Course Information"),
+      backgroundColor: resolveAppHeaderColor(),
     );
   }
 

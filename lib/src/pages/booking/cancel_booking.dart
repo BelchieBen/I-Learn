@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class CancelBooking extends StatefulWidget {
   const CancelBooking({super.key});
 
@@ -11,6 +13,7 @@ class _CancelBooking extends State<CancelBooking> {
   AppBar appHeader() {
     return AppBar(
       title: const Text("Cancel a Booking"),
+      backgroundColor: resolveAppHeaderColor(),
     );
   }
 

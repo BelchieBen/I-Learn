@@ -5,6 +5,8 @@ import 'package:booking_app/src/util/page_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
 
@@ -44,38 +46,38 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   AppBar appHeader() {
     return AppBar(
-      title: context.watch<Searching>().isSearching
-          ? TextField(
-              onChanged: (value) {
-                context.read<SearchTerm>().updateSearchTerm(term: value);
-              },
-              decoration: const InputDecoration(
-                  hintText: "Search Courses",
-                  hintStyle: TextStyle(fontSize: 20),
-                  border: InputBorder.none),
-            )
-          : const Text("I-Learn"),
-      leading: context.watch<Searching>().isSearching
-          ? IconButton(
-              onPressed: () {
-                setState(() {
-                  context.read<SearchTerm>().updateSearchTerm(term: "");
-                  context.read<Searching>().stopSearch();
-                });
-              },
-              icon: const Icon(Icons.arrow_back))
-          : null,
-      actions: [
-        screenIndex == 1 && !context.watch<Searching>().isSearching
+        title: context.watch<Searching>().isSearching
+            ? TextField(
+                onChanged: (value) {
+                  context.read<SearchTerm>().updateSearchTerm(term: value);
+                },
+                decoration: const InputDecoration(
+                    hintText: "Search Courses",
+                    hintStyle: TextStyle(fontSize: 20),
+                    border: InputBorder.none),
+              )
+            : const Text("I-Learn"),
+        leading: context.watch<Searching>().isSearching
             ? IconButton(
                 onPressed: () {
-                  context.read<Searching>().startSearch();
+                  setState(() {
+                    context.read<SearchTerm>().updateSearchTerm(term: "");
+                    context.read<Searching>().stopSearch();
+                  });
                 },
-                icon: const Icon(Icons.search),
-              )
-            : const SizedBox(),
-      ],
-    );
+                icon: const Icon(Icons.arrow_back))
+            : null,
+        actions: [
+          screenIndex == 1 && !context.watch<Searching>().isSearching
+              ? IconButton(
+                  onPressed: () {
+                    context.read<Searching>().startSearch();
+                  },
+                  icon: const Icon(Icons.search),
+                )
+              : const SizedBox(),
+        ],
+        backgroundColor: resolveAppHeaderColor());
   }
 
   Center pageBody() {

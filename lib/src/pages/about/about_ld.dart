@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../util/resolve_header_color.dart';
+
 class AboutLD extends StatefulWidget {
   const AboutLD({super.key});
 
@@ -10,8 +12,8 @@ class AboutLD extends StatefulWidget {
 class _AboutLDState extends State<AboutLD> {
   AppBar appHeader() {
     return AppBar(
-      title: const Text("About L&D"),
-    );
+        title: const Text("About L&D"),
+        backgroundColor: resolveAppHeaderColor());
   }
 
   @override
