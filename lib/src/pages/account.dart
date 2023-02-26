@@ -14,7 +14,9 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  int maxItems = 2;
+  int maxCompletedCoursItems = 2;
+  int maxLearningPathways = 2;
+  String tab = "learning_record";
   static const coursesCompleted = [
     {
       "title": "Courageous Conversations",
@@ -55,51 +57,198 @@ class _MyAccountState extends State<MyAccount> {
     {
       "title": "Computer Safety",
       "image": "images/CentralisedSafety Data.png",
-      "pathwayStep": "0",
+      "pathwayStep": "3",
       "steps": "Intermediate,Advanced,Expert",
     },
   ];
 
+  static const userInfo = {
+    "employeeId": "123456",
+    "name": "Ben Belcher",
+    "email": "benjamin.belcher@ideagen.com",
+    "phoneNumber": "09765434567",
+    "dob": "01/01/2000",
+  };
+
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color.fromRGBO(27, 131, 139, 1),
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+      return SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              minHeight: viewportConstraints.maxHeight,
+              minWidth: viewportConstraints.maxWidth,
+              maxWidth: viewportConstraints.maxWidth),
+          child: Theme(
+            data: ThemeData(
+              colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: const Color.fromRGBO(27, 131, 139, 1),
+                  ),
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
             ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: TextButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-      ),
-      child: ListView(
-        shrinkWrap: true,
-        physics: const ScrollPhysics(),
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 accountProfile(),
-                DefaultTabController(
-                  initialIndex: 0,
-                  length: 2,
-                  child: Column(
-                    children: [
-                      accountTabBar(),
-                      accountTabsContent(context),
-                    ],
-                  ),
-                ),
+                tabButtons(context),
+                (tab == "learning_record")
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            coursesCompletedSection(),
+                            TextButton(
+                              onPressed: () {
+                                if (maxCompletedCoursItems != 2) {
+                                  setState(() {
+                                    maxCompletedCoursItems = 2;
+                                  });
+                                } else {
+                                  setState(() {
+                                    maxCompletedCoursItems =
+                                        coursesCompleted.length;
+                                  });
+                                }
+                              },
+                              child: Text(maxCompletedCoursItems == 2
+                                  ? "Show All"
+                                  : "Show Less"),
+                            ),
+                            learnigPathwaysSection(),
+                            TextButton(
+                              onPressed: () {
+                                if (maxLearningPathways != 2) {
+                                  setState(() {
+                                    maxLearningPathways = 2;
+                                  });
+                                } else {
+                                  setState(() {
+                                    maxLearningPathways =
+                                        currentPathwayProgression.length;
+                                  });
+                                }
+                              },
+                              child: Text(maxLearningPathways == 2
+                                  ? "Show All"
+                                  : "Show Less"),
+                            ),
+                          ],
+                        ),
+                      )
+                    : (tab == "personal_details")
+                        ? Column(
+                            children: [
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.credit_card,
+                                  color: Colors.black,
+                                ),
+                                title: const Text("Employee ID"),
+                                subtitle: Text(userInfo["employeeId"]!),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.person_outline,
+                                  color: Colors.black,
+                                ),
+                                title: const Text("Name"),
+                                subtitle: Text(userInfo["name"]!),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.alternate_email,
+                                  color: Colors.black,
+                                ),
+                                title: const Text("Email"),
+                                subtitle: Text(userInfo["email"]!),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.phone,
+                                  color: Colors.black,
+                                ),
+                                title: const Text("Phone Number"),
+                                subtitle: Text(userInfo["phoneNumber"]!),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.perm_contact_calendar,
+                                  color: Colors.black,
+                                ),
+                                title: const Text("Date of Birth"),
+                                subtitle: Text(userInfo["dob"]!),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink()
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      );
+    });
+  }
+
+  Wrap tabButtons(BuildContext context) {
+    return Wrap(
+      children: [
+        Container(
+          decoration: tab == "learning_record"
+              ? const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(5, 109, 120, 1),
+                    ),
+                  ),
+                )
+              : null,
+          width: (MediaQuery.of(context).size.width / 2),
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                tab = "learning_record";
+              });
+            },
+            child: const Text(
+              "Learning Record",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+        Container(
+          decoration: tab == "personal_details"
+              ? const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 2,
+                      color: Color.fromRGBO(5, 109, 120, 1),
+                    ),
+                  ),
+                )
+              : null,
+          width: (MediaQuery.of(context).size.width / 2),
+          child: TextButton(
+            onPressed: () {
+              setState(() {
+                tab = "personal_details";
+              });
+            },
+            child: const Text(
+              "Personal Details",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -151,44 +300,6 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  Container accountTabsContent(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: TabBarView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                coursesCompletedSection(),
-                TextButton(
-                  onPressed: () {
-                    if (maxItems != 2) {
-                      setState(() {
-                        maxItems = 2;
-                      });
-                    } else {
-                      setState(() {
-                        maxItems = coursesCompleted.length;
-                      });
-                    }
-                  },
-                  child: Text(maxItems == 2 ? "Show All" : "Show Less"),
-                ),
-                learnigPathwaysSection()
-              ],
-            ),
-          ),
-          const Center(
-            child: Text("It's rainy here"),
-          ),
-        ],
-      ),
-    );
-  }
-
   Column coursesCompletedSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +309,7 @@ class _MyAccountState extends State<MyAccount> {
         for (int courseIndex = 0;
             courseIndex < coursesCompleted.length;
             courseIndex++)
-          courseIndex < maxItems
+          courseIndex < maxCompletedCoursItems
               ? completedCourseCard(coursesCompleted[courseIndex])
               : const SizedBox.shrink(),
       ],
@@ -212,26 +323,11 @@ class _MyAccountState extends State<MyAccount> {
         const Text("Learnig Pathways"),
         const Divider(),
         for (int courseIndex = 0;
-            courseIndex < coursesCompleted.length;
+            courseIndex < currentPathwayProgression.length;
             courseIndex++)
-          courseIndex < maxItems
+          courseIndex < maxLearningPathways
               ? learningPathwayCard(currentPathwayProgression[courseIndex])
               : const SizedBox.shrink(),
-      ],
-    );
-  }
-
-  TabBar accountTabBar() {
-    return const TabBar(
-      labelColor: Colors.black,
-      indicatorColor: Color.fromRGBO(92, 199, 208, 1),
-      tabs: <Widget>[
-        Tab(
-          text: "Learning Record",
-        ),
-        Tab(
-          text: "Personal Details",
-        ),
       ],
     );
   }
