@@ -68,16 +68,23 @@ class _AppScaffoldState extends State<AppScaffold> {
                 icon: const Icon(Icons.arrow_back))
             : null,
         actions: [
-          screenIndex == 1 && !context.watch<Searching>().isSearching
+          screenIndex == 3
               ? IconButton(
-                  onPressed: () {
-                    context.read<Searching>().startSearch();
-                  },
-                  icon: const Icon(Icons.search),
+                  onPressed: () {},
+                  icon: const Icon(Icons.more_vert),
                 )
-              : const SizedBox(),
+              : (screenIndex == 1) && (!context.watch<Searching>().isSearching)
+                  ? IconButton(
+                      onPressed: () {
+                        context.read<Searching>().startSearch();
+                      },
+                      icon: const Icon(Icons.search),
+                    )
+                  : const SizedBox()
         ],
-        backgroundColor: resolveAppHeaderColor());
+        backgroundColor: screenIndex == 3
+            ? const Color.fromRGBO(228, 252, 255, 1)
+            : resolveAppHeaderColor());
   }
 
   Center pageBody() {
