@@ -357,6 +357,7 @@ class _SearchCoursesState extends State<SearchCourses> {
   void _settingModalBottomSheet(context) {
     showBottomSheet(
         context: context,
+        backgroundColor: const Color.fromRGBO(244, 245, 246, 1),
         elevation: 2,
         enableDrag: true,
         builder: (BuildContext bc) {
