@@ -16,5 +16,8 @@ jobs:
         with:
           flutter-version: '3.7.3'
       - run: flutter pub get
+      - name: 'Create env file'
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
       #- run: flutter test
       - run: flutter build apk --debug
