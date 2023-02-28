@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class TextFormInput extends StatefulWidget {
   final String labelText;
   final int numLines;
+  final bool isDense;
   const TextFormInput({
     super.key,
     required this.labelText,
     required this.numLines,
+    required this.isDense,
   });
 
   @override
@@ -34,6 +36,8 @@ class _TextFormInputState extends State<TextFormInput> {
             maxLines: widget.numLines,
             minLines: widget.numLines,
             decoration: InputDecoration(
+              isDense: widget.isDense,
+              contentPadding: const EdgeInsets.all(10),
               border: OutlineInputBorder(
                 borderSide: const BorderSide(
                   width: 2,

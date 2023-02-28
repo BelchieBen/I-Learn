@@ -37,14 +37,17 @@ class _BookingFormState extends State<BookingForm> {
           TextFormInput(
             labelText: "How has this training been identified?",
             numLines: 3,
+            isDense: false,
           ),
           TextFormInput(
             labelText: "How will you apply the learning in your role?",
             numLines: 3,
+            isDense: false,
           ),
           TextFormInput(
             labelText: "How will you measure the success of this learning?",
             numLines: 3,
+            isDense: false,
           ),
         ],
       ),

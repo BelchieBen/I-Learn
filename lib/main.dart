@@ -1,8 +1,10 @@
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
+import 'package:booking_app/src/pages/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'src/components/scaffold/app_scaffold.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -55,6 +57,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
+  bool userAuthenticated = false;
 
   @override
   void initState() {
@@ -66,6 +69,14 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    _checkCurrentUser() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        userAuthenticated =
+            (prefs.getString("currentUser") != "" ? true : false);
+      });
+    }
+
     return Scaffold(
       body: Lottie.network(
         'https://bensreacttest.s3.us-west-2.amazonaws.com/splash+screen.json',
@@ -79,7 +90,10 @@ class _SplashScreenState extends State<SplashScreen>
             ..duration = composition.duration
             ..forward().whenComplete(() => Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const AppScaffold()),
+                  MaterialPageRoute(
+                      builder: (context) => userAuthenticated
+                          ? const AppScaffold()
+                          : const RegisterPage()),
                 ));
         },
       ),
