@@ -46,6 +46,7 @@ dependencies:
   supabase_flutter: ^1.4.1
   flutter_dotenv: ^5.0.2
   shared_preferences: ^2.0.18
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

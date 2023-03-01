@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 typedef StringCallback = void Function(String? val);
 
-class TextFormInput extends StatefulWidget {
+class CustomDateFormInput extends StatefulWidget {
   final String labelText;
-  final int numLines;
   final bool isDense;
   final StringCallback setValue;
-  const TextFormInput({
+  const CustomDateFormInput({
     super.key,
     required this.labelText,
-    required this.numLines,
     required this.isDense,
     required this.setValue,
   });
 
   @override
-  State<TextFormInput> createState() => _TextFormInputState();
+  State<CustomDateFormInput> createState() => _CustomDateFormInputState();
 }
 
-class _TextFormInputState extends State<TextFormInput> {
+class _CustomDateFormInputState extends State<CustomDateFormInput> {
+  TextEditingController dateController = TextEditingController();
+
+  @override
+  void initState() {
+    dateController.text = "";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,17 +38,8 @@ class _TextFormInputState extends State<TextFormInput> {
             padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
             child: Text(widget.labelText),
           ),
-          TextFormField(
-            validator: (String? value) {
-              if (value == null || value.isEmpty)
-                return "This field is required";
-            },
-            onSaved: (String? value) {
-              widget.setValue(value);
-            },
-            cursorColor: const Color.fromRGBO(27, 131, 139, 1),
-            maxLines: widget.numLines,
-            minLines: widget.numLines,
+          TextField(
+            controller: dateController,
             decoration: InputDecoration(
               isDense: widget.isDense,
               contentPadding: const EdgeInsets.all(10),
@@ -58,7 +56,27 @@ class _TextFormInputState extends State<TextFormInput> {
                   ),
                   borderRadius: BorderRadius.circular(12)),
             ),
-          ),
+            readOnly: true,
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(2101),
+              );
+
+              if (pickedDate != null) {
+                String formattedDate =
+                    DateFormat('yyyy-MM-dd').format(pickedDate);
+
+                widget.setValue(formattedDate);
+
+                setState(() {
+                  dateController.text = formattedDate;
+                });
+              } else {}
+            },
+          )
         ],
       ),
     );
