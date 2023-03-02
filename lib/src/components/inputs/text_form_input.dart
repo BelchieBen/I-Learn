@@ -6,12 +6,14 @@ class TextFormInput extends StatefulWidget {
   final String labelText;
   final int numLines;
   final bool isDense;
+  final bool obscureText;
   final StringCallback setValue;
   const TextFormInput({
     super.key,
     required this.labelText,
     required this.numLines,
     required this.isDense,
+    required this.obscureText,
     required this.setValue,
   });
 
@@ -32,13 +34,19 @@ class _TextFormInputState extends State<TextFormInput> {
             child: Text(widget.labelText),
           ),
           TextFormField(
-            validator: (String? value) {
-              if (value == null || value.isEmpty)
-                return "This field is required";
-            },
+            validator: widget.obscureText
+                ? (String? value) {
+                    if (value == null || value.length < 6)
+                      return "Password must be at least 6 characters";
+                  }
+                : (String? value) {
+                    if (value == null || value.isEmpty)
+                      return "This field is required";
+                  },
             onSaved: (String? value) {
               widget.setValue(value);
             },
+            obscureText: widget.obscureText,
             cursorColor: const Color.fromRGBO(27, 131, 139, 1),
             maxLines: widget.numLines,
             minLines: widget.numLines,

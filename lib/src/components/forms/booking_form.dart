@@ -42,6 +42,7 @@ class _BookingFormState extends State<BookingForm> {
             labelText: "How has this training been identified?",
             numLines: 3,
             isDense: false,
+            obscureText: false,
             setValue: (value) => setState(() {
               howIdentified = value;
             }),
@@ -50,6 +51,7 @@ class _BookingFormState extends State<BookingForm> {
             labelText: "How will you apply the learning in your role?",
             numLines: 3,
             isDense: false,
+            obscureText: false,
             setValue: (value) => setState(() {
               howApply = value;
             }),
@@ -58,6 +60,7 @@ class _BookingFormState extends State<BookingForm> {
             labelText: "How will you measure the success of this learning?",
             numLines: 3,
             isDense: false,
+            obscureText: false,
             setValue: (value) => setState(() {
               howMeasure = value;
             }),

@@ -1,9 +1,11 @@
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
-import 'package:booking_app/src/pages/courses/search_courses.dart';
+import 'package:booking_app/src/pages/auth/register.dart';
 import 'package:booking_app/src/util/page_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/resolve_header_color.dart';
 
@@ -16,6 +18,21 @@ class AppScaffold extends StatefulWidget {
 
 class _AppScaffoldState extends State<AppScaffold> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  SupabaseClient supabase = Supabase.instance.client;
+  SharedPreferences? preferences;
+
+  void _initPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      preferences = prefs;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initPreferences();
+  }
 
   int screenIndex = 0;
   late bool showNavigationDrawer;
@@ -70,8 +87,17 @@ class _AppScaffoldState extends State<AppScaffold> {
         actions: [
           screenIndex == 3
               ? IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_vert),
+                  onPressed: () {
+                    supabase.auth.signOut();
+                    preferences?.setString("currentUser", "");
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.logout),
                 )
               : (screenIndex == 1) && (!context.watch<Searching>().isSearching)
                   ? IconButton(

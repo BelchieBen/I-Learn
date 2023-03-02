@@ -1,3 +1,4 @@
+import 'package:booking_app/providers/current_user.dart';
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
 import 'package:booking_app/src/pages/auth/register.dart';
@@ -24,6 +25,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => SearchTerm(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CurrentUser(),
         ),
       ],
       child: MaterialApp(
@@ -65,18 +69,24 @@ class _SplashScreenState extends State<SplashScreen>
     _controller = AnimationController(
       vsync: this,
     );
+    _checkCurrentUser();
+  }
+
+  _checkCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SupabaseClient supabase = Supabase.instance.client;
+    String? currentUser = prefs.getString("currentUser");
+    setState(() {
+      userAuthenticated =
+          ((currentUser != null ? currentUser.isNotEmpty : false) ||
+                  supabase.auth.currentUser != null
+              ? true
+              : false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _checkCurrentUser() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        userAuthenticated =
-            (prefs.getString("currentUser") != "" ? true : false);
-      });
-    }
-
     return Scaffold(
       body: Lottie.network(
         'https://bensreacttest.s3.us-west-2.amazonaws.com/splash+screen.json',

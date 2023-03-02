@@ -1,7 +1,10 @@
 import 'package:booking_app/src/components/inputs/custom_date_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/inputs/text_form_input.dart';
+import '../../components/scaffold/app_scaffold.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,6 +16,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final supabase = Supabase.instance.client;
+
   String? fullName;
 
   String? jobTitle;
@@ -27,15 +32,52 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? password2;
 
+  User? user;
+
+  bool isLoading = false;
+
   void onSubmit() {
     if (RegisterPage.formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
       RegisterPage.formKey.currentState!.save();
-      print(fullName);
-      print(dob);
+      if (_validateValues()) {
+        _registerUser();
+      }
     }
   }
 
-  void _validateValues() {}
+  void _registerUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AuthResponse response =
+        await supabase.auth.signUp(email: email, password: password!);
+    if (response.user != null && response.session != null) {
+      setState(() {
+        user = response.user;
+      });
+
+      prefs.setString("currentUser", response.session.toString());
+      setState(() => isLoading = false);
+      if (context.mounted) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const AppScaffold()));
+      }
+    }
+  }
+
+  bool _validateValues() {
+    if (fullName != null &&
+        jobTitle != null &&
+        phoneNumber != null &&
+        email != null &&
+        dob != null &&
+        password != null &&
+        password2 != null &&
+        password == password2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   labelText: "Full Name",
                                   numLines: 1,
                                   isDense: true,
+                                  obscureText: false,
                                   setValue: (value) => setState(() {
                                     fullName = value;
                                   }),
@@ -97,6 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   labelText: "Job Title",
                                   numLines: 1,
                                   isDense: true,
+                                  obscureText: false,
                                   setValue: (value) => setState(() {
                                     jobTitle = value;
                                   }),
@@ -105,6 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   labelText: "Phone Number",
                                   numLines: 1,
                                   isDense: true,
+                                  obscureText: false,
                                   setValue: (value) => setState(() {
                                     phoneNumber = value;
                                   }),
@@ -113,6 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   labelText: "Email",
                                   numLines: 1,
                                   isDense: true,
+                                  obscureText: false,
                                   setValue: (value) => setState(() {
                                     email = value;
                                   }),
@@ -124,16 +170,45 @@ class _RegisterPageState extends State<RegisterPage> {
                                     dob = value;
                                   }),
                                 ),
+                                TextFormInput(
+                                  labelText: "Password",
+                                  numLines: 1,
+                                  isDense: true,
+                                  obscureText: true,
+                                  setValue: (value) => setState(() {
+                                    password = value;
+                                  }),
+                                ),
+                                TextFormInput(
+                                  labelText: "Confirm Password",
+                                  numLines: 1,
+                                  isDense: true,
+                                  obscureText: true,
+                                  setValue: (value) => setState(() {
+                                    password2 = value;
+                                  }),
+                                ),
                                 const SizedBox(
                                   height: 12,
                                 ),
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      onSubmit();
-                                    },
-                                    child: const Text("Register"),
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            onSubmit();
+                                          },
+                                    child: isLoading
+                                        ? const SizedBox(
+                                            height: 14,
+                                            width: 14,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 1,
+                                              color:
+                                                  Color.fromRGBO(53, 69, 84, 1),
+                                            ))
+                                        : const Text("Register"),
                                   ),
                                 ),
                               ],
