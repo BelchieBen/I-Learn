@@ -1,4 +1,5 @@
 import 'package:booking_app/src/components/inputs/custom_date_picker.dart';
+import 'package:booking_app/src/pages/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -218,7 +219,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                 minimumSize: Size.zero,
                                 padding: EdgeInsets.zero,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginPage(),
+                                  ),
+                                );
+                              },
                               child: const Text("Login"),
                             )
                           ],
