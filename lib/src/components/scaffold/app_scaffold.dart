@@ -1,5 +1,6 @@
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
+import 'package:booking_app/src/pages/auth/login.dart';
 import 'package:booking_app/src/pages/auth/register.dart';
 import 'package:booking_app/src/util/page_list.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +94,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
+                        builder: (context) => const LoginPage(),
                       ),
                     );
                   },

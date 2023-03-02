@@ -1,6 +1,7 @@
 import 'package:booking_app/providers/current_user.dart';
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
+import 'package:booking_app/src/pages/auth/login.dart';
 import 'package:booking_app/src/pages/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
                   MaterialPageRoute(
                       builder: (context) => userAuthenticated
                           ? const AppScaffold()
-                          : const RegisterPage()),
+                          : const LoginPage()),
                 ));
         },
       ),
