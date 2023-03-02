@@ -15,6 +15,10 @@ class BookingForm extends StatefulWidget {
 }
 
 class _BookingFormState extends State<BookingForm> {
+  String? howIdentified;
+  String? howApply;
+  String? howMeasure;
+
   @override
   Widget build(BuildContext context) {
     Color getColor(Set<MaterialState> states) {
@@ -33,18 +37,33 @@ class _BookingFormState extends State<BookingForm> {
       key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           TextFormInput(
             labelText: "How has this training been identified?",
             numLines: 3,
+            isDense: false,
+            obscureText: false,
+            setValue: (value) => setState(() {
+              howIdentified = value;
+            }),
           ),
           TextFormInput(
             labelText: "How will you apply the learning in your role?",
             numLines: 3,
+            isDense: false,
+            obscureText: false,
+            setValue: (value) => setState(() {
+              howApply = value;
+            }),
           ),
           TextFormInput(
             labelText: "How will you measure the success of this learning?",
             numLines: 3,
+            isDense: false,
+            obscureText: false,
+            setValue: (value) => setState(() {
+              howMeasure = value;
+            }),
           ),
         ],
       ),

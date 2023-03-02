@@ -1,8 +1,11 @@
+import 'package:booking_app/providers/current_user.dart';
 import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
+import 'package:booking_app/src/pages/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'src/components/scaffold/app_scaffold.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,6 +25,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => SearchTerm(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CurrentUser(),
         ),
       ],
       child: MaterialApp(
@@ -55,6 +61,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
+  bool userAuthenticated = false;
 
   @override
   void initState() {
@@ -62,6 +69,20 @@ class _SplashScreenState extends State<SplashScreen>
     _controller = AnimationController(
       vsync: this,
     );
+    _checkCurrentUser();
+  }
+
+  _checkCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SupabaseClient supabase = Supabase.instance.client;
+    String? currentUser = prefs.getString("currentUser");
+    setState(() {
+      userAuthenticated =
+          ((currentUser != null ? currentUser.isNotEmpty : false) ||
+                  supabase.auth.currentUser != null
+              ? true
+              : false);
+    });
   }
 
   @override
@@ -79,7 +100,10 @@ class _SplashScreenState extends State<SplashScreen>
             ..duration = composition.duration
             ..forward().whenComplete(() => Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const AppScaffold()),
+                  MaterialPageRoute(
+                      builder: (context) => userAuthenticated
+                          ? const AppScaffold()
+                          : const RegisterPage()),
                 ));
         },
       ),

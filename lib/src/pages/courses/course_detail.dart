@@ -31,8 +31,6 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     final contentTypes = widget.course["learningContents"]!.split(",");
     final quoteText = widget.course["quoteText"]!;
 
-    print(widget.course["showBookBtn"]);
-
     return Scaffold(
       appBar: appHeader(),
       body: LayoutBuilder(
