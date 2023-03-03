@@ -3,12 +3,11 @@ import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:booking_app/src/components/course/self_directed_learning_table.dart';
 import 'package:booking_app/src/pages/booking/book_course.dart';
 import 'package:flutter/material.dart';
-import 'package:string_validator/string_validator.dart';
 
 import '../../util/resolve_header_color.dart';
 
 class CourseDetailPage extends StatefulWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const CourseDetailPage({super.key, required this.course});
 
   @override
@@ -27,9 +26,9 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tags = widget.course["tags"]!.split(",");
-    final contentTypes = widget.course["learningContents"]!.split(",");
-    final quoteText = widget.course["quoteText"]!;
+    final tags = widget.course["course_tags"]!;
+    final contentTypes = widget.course["course_learning_types"]!;
+    final quoteText = widget.course["quote_text"]!;
 
     return Scaffold(
       appBar: appHeader(),

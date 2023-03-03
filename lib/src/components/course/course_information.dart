@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
  * The Course image and supporting text shown at the top of pages containing the course
  */
 class CourseInformation extends StatefulWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const CourseInformation({
     super.key,
     required this.course,

@@ -1,5 +1,6 @@
 import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyBookings extends StatefulWidget {
   const MyBookings({super.key});
@@ -9,35 +10,52 @@ class MyBookings extends StatefulWidget {
 }
 
 class _MyBookingState extends State<MyBookings> {
-  final List<Map<String, String>> myBookings = [
-    {
-      "title": "Courageous Conversations",
-      "image": "images/CompanyNews.png",
-      "status": "Approved",
-      "date": "20/04/2022 9:00",
-      "trainer": "Callum Davidson",
-      "location": "Ruddington",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Delegation",
-      "image": "images/Collaboration.png",
-      "status": "Pending",
-      "date": "26/09/2022 13:30",
-      "trainer": "Jo Harris",
-      "location": "Ruddington",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Food Safety",
-      "image": "images/FoodSafetyLevel.png",
-      "status": "Declined",
-      "date": "04/07/2022 11:00",
-      "trainer": "Rebecca Jackson",
-      "location": "MS Teams",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-  ];
+  List<Map<String, dynamic>> myBookings = [];
+  @override
+  void initState() {
+    super.initState();
+    final supabase = Supabase.instance.client;
+    _fetchMyBookings(supabase);
+  }
+
+  void _fetchMyBookings(SupabaseClient supabase) async {
+    final myBookingsResponse = await supabase
+        .from("user_bookings")
+        .select("*,employee(*), session(*)");
+    setState(() {
+      myBookings = myBookingsResponse.toList();
+    });
+  }
+
+  // final List<Map<String, String>> myBookings = [
+  //   {
+  //     "title": "Courageous Conversations",
+  //     "image": "images/CompanyNews.png",
+  //     "status": "Approved",
+  //     "date": "20/04/2022 9:00",
+  //     "trainer": "Callum Davidson",
+  //     "location": "Ruddington",
+  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
+  //   },
+  //   {
+  //     "title": "Delegation",
+  //     "image": "images/Collaboration.png",
+  //     "status": "Pending",
+  //     "date": "26/09/2022 13:30",
+  //     "trainer": "Jo Harris",
+  //     "location": "Ruddington",
+  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
+  //   },
+  //   {
+  //     "title": "Food Safety",
+  //     "image": "images/FoodSafetyLevel.png",
+  //     "status": "Declined",
+  //     "date": "04/07/2022 11:00",
+  //     "trainer": "Rebecca Jackson",
+  //     "location": "MS Teams",
+  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
+  //   },
+  // ];
 
   Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -101,7 +119,7 @@ class _MyBookingState extends State<MyBookings> {
     );
   }
 
-  Padding bookingCard(Map<String, String> booking) {
+  Padding bookingCard(Map<String, dynamic> booking) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Card(

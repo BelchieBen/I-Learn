@@ -3,7 +3,9 @@ import 'package:booking_app/providers/searching.dart';
 import 'package:booking_app/src/components/course/course_tags.dart';
 import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/course/course_filter.dart';
 
@@ -17,51 +19,24 @@ class SearchCourses extends StatefulWidget {
 class _SearchCoursesState extends State<SearchCourses> {
   int _selectedSortIndex = 0;
   bool showFilters = false;
+  List<Map<String, dynamic>> courses = [];
 
-  final courses = [
-    {
-      "title": "Difficult Conversations",
-      "image": "images/CompanyNews.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Coaching",
-      "image": "images/BackToWork.png",
-      "learningContents": "FaceToFace.png,Video.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Computer Safety",
-      "image": "images/CentralisedSafety Data.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Team Collaboration",
-      "image": "images/Collaboration.png",
-      "learningContents": "EBook.png,ELearning.png,TopTips.png,Online.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "First Aid Training",
-      "image": "images/FirstAid.png",
-      "learningContents": "Video.png,Podcast.png,TopTips.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Assertive Communication",
-      "image": "images/ConflictResolution.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 4 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Assertive Communication",
-      "image": "images/ConflictResolution.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 4 Hours,Suitable for everyone",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final supabase = Supabase.instance.client;
+    _fetchCourseSessions(supabase);
+  }
+
+  void _fetchCourseSessions(SupabaseClient supabase) async {
+    final List<
+        Map<String,
+            dynamic>> coursesResponse = await supabase.from("courses").select(
+        "*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))");
+    setState(() {
+      courses = coursesResponse.toList();
+    });
+  }
 
   final sortFilters = [
     {"icon": Icons.keyboard_double_arrow_up, "sortBy": "Relevence"},
@@ -271,10 +246,10 @@ class _SearchCoursesState extends State<SearchCourses> {
                         style: const TextStyle(fontSize: 18),
                       ),
                       LearningTypes(
-                        contentTypes: course["learningContents"]!.split(","),
+                        contentTypes: course["course_learning_types"]!,
                       ),
                       CourseTags(
-                        tags: course["tags"]!.split(","),
+                        tags: course["course_tags"]!,
                         tagSize: 11,
                       )
                     ],
@@ -291,7 +266,7 @@ class _SearchCoursesState extends State<SearchCourses> {
   Consumer filteredCoursesListView() {
     return Consumer<SearchTerm>(
       builder: (context, model, child) {
-        List<Map<String, String>> filtered = [];
+        List<Map<String, dynamic>> filtered = [];
         if (model.searchTerm != "") {
           filtered = courses
               .where(
@@ -334,11 +309,10 @@ class _SearchCoursesState extends State<SearchCourses> {
                             style: const TextStyle(fontSize: 18),
                           ),
                           LearningTypes(
-                            contentTypes:
-                                course["learningContents"]!.split(","),
+                            contentTypes: course["course_learning_types"]!,
                           ),
                           CourseTags(
-                            tags: course["tags"]!.split(","),
+                            tags: course["course_tags"]!,
                             tagSize: 11,
                           )
                         ],

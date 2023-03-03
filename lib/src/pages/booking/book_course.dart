@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../util/resolve_header_color.dart';
 
 class CourseBookingPage extends StatefulWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const CourseBookingPage({
     super.key,
     required this.course,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 import 'course_tags.dart';
 import 'learning_types.dart';
 
 class CompletedCourseCard extends StatelessWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const CompletedCourseCard({super.key, required this.course});
 
   @override
@@ -18,7 +19,7 @@ class CompletedCourseCard extends StatelessWidget {
             Row(
               children: [
                 Image.asset(
-                  course["image"]!,
+                  course["sessions"]["courses"]["image"]!,
                   height: 110,
                   width: 110,
                 ),
@@ -29,7 +30,7 @@ class CompletedCourseCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      course["title"]!,
+                      course["sessions"]["courses"]["title"]!,
                       style: const TextStyle(fontSize: 18),
                     ),
                     Row(
@@ -40,7 +41,7 @@ class CompletedCourseCard extends StatelessWidget {
                           color: Color.fromRGBO(8, 167, 104, 1),
                         ),
                         Text(
-                          course["date"]!,
+                          course["sessions"]["start_date"]!,
                           style: const TextStyle(
                             color: Color.fromRGBO(110, 120, 129, 1),
                           ),
@@ -48,11 +49,12 @@ class CompletedCourseCard extends StatelessWidget {
                       ],
                     ),
                     LearningTypes(
-                      contentTypes:
-                          course["learningTypes"]!.split(",").toList(),
+                      contentTypes: course["sessions"]["courses"]
+                          ["course_learning_types"]!,
                     ),
                     CourseTags(
-                        tags: course["tags"]!.split(",").toList(), tagSize: 11),
+                        tags: course["sessions"]["courses"]["course_tags"]!,
+                        tagSize: 11),
                   ],
                 )
               ],

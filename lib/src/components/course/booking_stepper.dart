@@ -3,7 +3,7 @@ import 'package:booking_app/src/components/forms/booking_form.dart';
 import 'package:flutter/material.dart';
 
 class BookingStepper extends StatefulWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const BookingStepper({
     super.key,
     required this.course,
