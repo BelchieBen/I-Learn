@@ -12,11 +12,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List recomendedCourses = [];
+  List upcomingItems = [];
   @override
   void initState() {
     super.initState();
     final supabase = Supabase.instance.client;
     _fetchRecomendedCourses(supabase);
+    _fetchUpcomingCourses(supabase);
   }
 
   void _fetchRecomendedCourses(SupabaseClient supabase) async {
@@ -31,65 +33,15 @@ class _HomeState extends State<Home> {
   }
 
   void _fetchUpcomingCourses(SupabaseClient supabase) async {
-    final courses = await supabase
+    final upcomingCourses = await supabase
         .from("user_bookings")
-        .select("*,users(*), sessions(*, courses(*), users(*))")
-        .limit(4);
+        .select(
+            "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+        .neq("status", "complete");
     setState(() {
-      recomendedCourses = courses.toList();
+      upcomingItems = upcomingCourses.toList();
     });
   }
-
-  final upcomingItems = [
-    {
-      "title": "COSHH Training",
-      "image": "images/COSHH.png",
-      "location": "Ruddington",
-      "altText": "30-03-2022 9:00 - 30-03-2022 17:00",
-      "description":
-          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
-      "quoteText":
-          "I apply most of the techniques I learnt in training in both my personal and professional life",
-      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Health & Safety",
-      "image": "images/FirstAid.png",
-      "location": "MS Teams",
-      "altText": "20-03-2022 9:00 - 23-03-2022 17:00",
-      "description":
-          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
-      "quoteText":
-          "I apply most of the techniques I learnt in training in both my personal and professional life",
-      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Food Heigine",
-      "image": "images/FoodSafetyLevel.png",
-      "location": "Ruddington",
-      "altText": "09-03-2022 9:00 - 09-03-2022 11:00",
-      "description":
-          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
-      "quoteText":
-          "I apply most of the techniques I learnt in training in both my personal and professional life",
-      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Asbestos Awareness",
-      "image": "images/AsbestosAwareness.png",
-      "location": "Pre-Recorded Sessions",
-      "altText": "24-03-2022 9:00 - 25-03-2022 17:00",
-      "description":
-          "Time management enables each of us to improve and be more productive and fulfilled individually, so logically the effects across whole organisations of good or poor time management are enormous. In fact, a 2007 survey of 2500 businesses over a four-year period indicated that on average wasted time cost UK businesses £80bn per year! Save time and money by learning how to properly plan and protect your time!",
-      "quoteText":
-          "I apply most of the techniques I learnt in training in both my personal and professional life",
-      "tags": "Duration: 2 Hours,Maximum Attendees: 12,Suitable for everyone",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +66,7 @@ class _HomeState extends State<Home> {
                           ),
                           CircularProgressIndicator(
                             color: Color.fromRGBO(5, 109, 120, 1),
+                            strokeWidth: 2,
                           ),
                           SizedBox(
                             height: 50,
@@ -136,7 +89,10 @@ class _HomeState extends State<Home> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               // CourseDetail(course: item),
-                                              CourseDetailPage(course: item),
+                                              CourseDetailPage(
+                                            course: item,
+                                            showBookBtn: true,
+                                          ),
                                         ),
                                       );
                                     },
@@ -173,17 +129,39 @@ class _HomeState extends State<Home> {
                             ),
                             const Text("Your upcoming courses"),
                             const Divider(),
+                            upcomingItems.isEmpty
+                                ? SizedBox(
+                                    width: double.infinity,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          height: 50,
+                                        ),
+                                        Image.asset("images/empty.png",
+                                            width: 250),
+                                        const Text("No Items",
+                                            style: TextStyle(fontSize: 18))
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                             for (var item in upcomingItems)
                               ListTile(
                                 leading: Image.asset(
-                                  item["image"]!,
+                                  item["sessions"]["courses"]["image"]!,
                                   width: 60,
                                 ),
-                                title: Text(item["title"]!),
+                                title:
+                                    Text(item["sessions"]["courses"]["title"]!),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(item["altText"]!),
+                                    Text(item["sessions"]["start_date"]! +
+                                        item["sessions"]["start_time"]! +
+                                        " - " +
+                                        item["sessions"]["end_time"]!),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -197,7 +175,8 @@ class _HomeState extends State<Home> {
                                               Color.fromRGBO(139, 147, 151, 1),
                                         ),
                                         Text(
-                                          item["location"]!,
+                                          item["sessions"]["courses"]
+                                              ["location"]!,
                                           style: const TextStyle(
                                             color: Color.fromRGBO(
                                                 139, 147, 151, 1),
@@ -213,7 +192,10 @@ class _HomeState extends State<Home> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           // CourseDetail(course: item),
-                                          CourseDetailPage(course: item),
+                                          CourseDetailPage(
+                                        course: item,
+                                        showBookBtn: false,
+                                      ),
                                     ),
                                   );
                                 },

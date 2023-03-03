@@ -1,5 +1,6 @@
 import 'package:booking_app/src/components/course/learning_types.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyBookings extends StatefulWidget {
@@ -10,7 +11,13 @@ class MyBookings extends StatefulWidget {
 }
 
 class _MyBookingState extends State<MyBookings> {
-  List<Map<String, dynamic>> myBookings = [];
+  List myBookings = [];
+  bool loadingMyBookings = false;
+
+  var loggerNoStack = Logger(
+    printer: PrettyPrinter(methodCount: 0),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -19,43 +26,18 @@ class _MyBookingState extends State<MyBookings> {
   }
 
   void _fetchMyBookings(SupabaseClient supabase) async {
-    final myBookingsResponse = await supabase
+    setState(() => loadingMyBookings = true);
+    final List myBookingsResponse = await supabase
         .from("user_bookings")
-        .select("*,employee(*), session(*)");
+        .select(
+            "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+        .neq("status", "complete");
+    loggerNoStack.v(myBookingsResponse);
     setState(() {
-      myBookings = myBookingsResponse.toList();
+      myBookings = myBookingsResponse;
+      loadingMyBookings = false;
     });
   }
-
-  // final List<Map<String, String>> myBookings = [
-  //   {
-  //     "title": "Courageous Conversations",
-  //     "image": "images/CompanyNews.png",
-  //     "status": "Approved",
-  //     "date": "20/04/2022 9:00",
-  //     "trainer": "Callum Davidson",
-  //     "location": "Ruddington",
-  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-  //   },
-  //   {
-  //     "title": "Delegation",
-  //     "image": "images/Collaboration.png",
-  //     "status": "Pending",
-  //     "date": "26/09/2022 13:30",
-  //     "trainer": "Jo Harris",
-  //     "location": "Ruddington",
-  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-  //   },
-  //   {
-  //     "title": "Food Safety",
-  //     "image": "images/FoodSafetyLevel.png",
-  //     "status": "Declined",
-  //     "date": "04/07/2022 11:00",
-  //     "trainer": "Rebecca Jackson",
-  //     "location": "MS Teams",
-  //     "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-  //   },
-  // ];
 
   Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -97,6 +79,34 @@ class _MyBookingState extends State<MyBookings> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 myBookingsHeading(),
+                loadingMyBookings
+                    ? const SizedBox(
+                        height: 50,
+                        width: double.infinity,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color.fromRGBO(5, 109, 120, 1),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+                myBookings.isEmpty && !loadingMyBookings
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            Image.asset("images/empty.png", width: 250),
+                            const Text("No Items",
+                                style: TextStyle(fontSize: 18))
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
                 for (var booking in myBookings) bookingCard(booking),
               ],
             ),
@@ -134,7 +144,7 @@ class _MyBookingState extends State<MyBookings> {
               Row(
                 children: [
                   Text(
-                    booking["title"]!,
+                    booking["sessions"]["courses"]["title"]!,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -162,7 +172,7 @@ class _MyBookingState extends State<MyBookings> {
               Row(
                 children: [
                   Image.asset(
-                    booking["image"]!,
+                    booking["sessions"]["courses"]["image"]!,
                     height: 120,
                     width: 120,
                   ),
@@ -170,11 +180,11 @@ class _MyBookingState extends State<MyBookings> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        booking["title"]!,
+                        booking["sessions"]["courses"]["title"]!,
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
-                        booking["date"]!,
+                        booking["sessions"]["start_date"]!,
                         style: const TextStyle(fontSize: 13),
                       ),
                       Row(
@@ -185,7 +195,7 @@ class _MyBookingState extends State<MyBookings> {
                             color: Color.fromRGBO(139, 147, 151, 1),
                           ),
                           Text(
-                            booking["trainer"]!,
+                            booking["sessions"]["trainer"]!,
                             style: const TextStyle(
                               color: Color.fromRGBO(139, 147, 151, 1),
                             ),
@@ -203,7 +213,7 @@ class _MyBookingState extends State<MyBookings> {
                             width: 4,
                           ),
                           Text(
-                            booking["location"]!,
+                            booking["sessions"]["courses"]["location"]!,
                             style: const TextStyle(
                               color: Color.fromRGBO(139, 147, 151, 1),
                             ),
@@ -211,8 +221,8 @@ class _MyBookingState extends State<MyBookings> {
                         ],
                       ),
                       LearningTypes(
-                        contentTypes:
-                            booking["learningTypes"]!.split(",").toList(),
+                        contentTypes: booking["sessions"]["courses"]
+                            ["course_learning_types"]!,
                       ),
                     ],
                   )

@@ -8,7 +8,9 @@ import '../../util/resolve_header_color.dart';
 
 class CourseDetailPage extends StatefulWidget {
   final Map<String, dynamic> course;
-  const CourseDetailPage({super.key, required this.course});
+  final bool showBookBtn;
+  const CourseDetailPage(
+      {super.key, required this.course, required this.showBookBtn});
 
   @override
   State<CourseDetailPage> createState() => _CourseDetailPageState();
@@ -62,7 +64,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     courseLocation(),
                     const SelfDirectedLearningTable(),
                     const SizedBox(height: 16),
-                    widget.course["showBookBtn"] != null
+                    widget.showBookBtn
                         ? bookSessionButton(context)
                         : const SizedBox(),
                     const SizedBox(height: 16),
