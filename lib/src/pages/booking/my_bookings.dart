@@ -32,7 +32,6 @@ class _MyBookingState extends State<MyBookings> {
         .select(
             "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
         .neq("status", "complete");
-    loggerNoStack.v(myBookingsResponse);
     setState(() {
       myBookings = myBookingsResponse;
       loadingMyBookings = false;

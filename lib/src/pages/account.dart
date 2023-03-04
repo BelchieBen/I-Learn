@@ -40,7 +40,6 @@ class _MyAccountState extends State<MyAccount> {
           .filter("user_id", "eq", currentUserId)
           .single();
 
-      loggerNoStack.v(profileResponse);
       setState(() {
         userProfile = profileResponse;
         loadingAccount = false;
@@ -57,7 +56,6 @@ class _MyAccountState extends State<MyAccount> {
               "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
           .filter("employee", "eq", currentUserId)
           .filter('status', 'eq', 'complete');
-      loggerNoStack.v(coursesCompletedResponse);
 
       setState(() {
         coursesCompleted = coursesCompletedResponse;

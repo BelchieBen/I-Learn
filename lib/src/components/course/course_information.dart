@@ -24,7 +24,6 @@ class _CourseInformationState extends State<CourseInformation> {
 
   @override
   Widget build(BuildContext context) {
-    loggerNoStack.v(widget.course);
     return Wrap(
       children: [
         Image.asset(
