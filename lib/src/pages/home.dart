@@ -158,10 +158,17 @@ class _HomeState extends State<Home> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(item["sessions"]["start_date"]! +
-                                        item["sessions"]["start_time"]! +
-                                        " - " +
-                                        item["sessions"]["end_time"]!),
+                                    Text(
+                                      item["sessions"]["start_date"]! +
+                                          " " +
+                                          item["sessions"]["start_time"]!
+                                              .substring(0, 5) +
+                                          " - " +
+                                          item["sessions"]["end_date"]! +
+                                          " " +
+                                          item["sessions"]["end_time"]!
+                                              .substring(0, 5),
+                                    ),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,

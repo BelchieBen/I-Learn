@@ -30,7 +30,7 @@ class _MyBookingState extends State<MyBookings> {
     final List myBookingsResponse = await supabase
         .from("user_bookings")
         .select(
-            "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+            "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
         .neq("status", "complete");
     setState(() {
       myBookings = myBookingsResponse;
@@ -194,7 +194,7 @@ class _MyBookingState extends State<MyBookings> {
                             color: Color.fromRGBO(139, 147, 151, 1),
                           ),
                           Text(
-                            booking["sessions"]["trainer"]!,
+                            booking["sessions"]["user_profile"]["full_name"]!,
                             style: const TextStyle(
                               color: Color.fromRGBO(139, 147, 151, 1),
                             ),
