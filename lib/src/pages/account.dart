@@ -1,6 +1,8 @@
 import 'package:booking_app/src/components/account/account_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
@@ -10,29 +12,56 @@ class MyAccount extends StatefulWidget {
 }
 
 class _MyAccountState extends State<MyAccount> {
-  static const coursesCompleted = [
-    {
-      "title": "Courageous Conversations",
-      "image": "images/CompanyNews.png",
-      "date": "20/04/2022 9:00",
-      "tags": "Face to Face 1 Day,Suitable for everyone",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Coaching",
-      "image": "images/BackToWork.png",
-      "date": "13/05/2022 9:00",
-      "tags": "Face to Face 2 Days,Suitable for everyone",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-    {
-      "title": "Computer Safety",
-      "image": "images/CentralisedSafety Data.png",
-      "date": "25/01/2023 9:00",
-      "tags": "Face to Face 1 Day,Suitable for everyone",
-      "learningTypes": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-    },
-  ];
+  List coursesCompleted = [];
+  Map<String, dynamic> userProfile = {};
+
+  bool loadingAccount = false;
+
+  var loggerNoStack = Logger(
+    printer: PrettyPrinter(methodCount: 0),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    SupabaseClient supabase = Supabase.instance.client;
+    print(supabase.auth.currentUser?.id);
+    _fetchCompletedCourses(supabase);
+    _fetchUserProfile(supabase);
+  }
+
+  void _fetchUserProfile(SupabaseClient supabase) async {
+    setState(() => loadingAccount = true);
+    var currentUserId = supabase.auth.currentUser?.id;
+    if (currentUserId != null || currentUserId != "") {
+      final profileResponse = await supabase
+          .from("user_profile")
+          .select("*")
+          .filter("user_id", "eq", currentUserId)
+          .single();
+
+      setState(() {
+        userProfile = profileResponse;
+        loadingAccount = false;
+      });
+    }
+  }
+
+  void _fetchCompletedCourses(SupabaseClient supabase) async {
+    var currentUserId = supabase.auth.currentUser?.id;
+    if (currentUserId != null || currentUserId != "") {
+      final coursesCompletedResponse = await supabase
+          .from("user_bookings")
+          .select(
+              "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+          .filter("employee", "eq", currentUserId)
+          .filter('status', 'eq', 'complete');
+
+      setState(() {
+        coursesCompleted = coursesCompletedResponse;
+      });
+    }
+  }
 
   static const currentPathwayProgression = [
     {
@@ -90,10 +119,9 @@ class _MyAccountState extends State<MyAccount> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 accountProfile(),
-                const AccountTabs(
-                  coursesCompleted: coursesCompleted,
+                AccountTabs(
                   currentPathwayProgression: currentPathwayProgression,
-                  userInfo: userInfo,
+                  userInfo: userProfile,
                 ),
               ],
             ),
@@ -109,16 +137,28 @@ class _MyAccountState extends State<MyAccount> {
       color: const Color.fromRGBO(228, 252, 255, 1),
       child: Column(children: [
         const Spacer(),
-        const Text(
-          "Ben Belcher",
-          style: TextStyle(fontSize: 24),
-        ),
-        const Text(
-          "Technology Solutions Apprentice",
-          style: TextStyle(
-            color: Color.fromRGBO(93, 105, 119, 1),
-          ),
-        ),
+        loadingAccount
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                ),
+              )
+            : Column(
+                children: [
+                  Text(
+                    userProfile["full_name"]!,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  Text(
+                    userProfile["job_title"]!,
+                    style: const TextStyle(
+                      color: Color.fromRGBO(93, 105, 119, 1),
+                    ),
+                  ),
+                ],
+              ),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.all(8.0),

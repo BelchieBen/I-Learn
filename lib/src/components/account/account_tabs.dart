@@ -1,15 +1,14 @@
 import 'package:booking_app/src/components/course/completed_course_card.dart';
 import 'package:booking_app/src/components/course/learning_pathway_card.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AccountTabs extends StatefulWidget {
-  final List<Map<String, String>> coursesCompleted;
   final List<Map<String, String>> currentPathwayProgression;
-  final Map<String, String> userInfo;
+  final Map<String, dynamic> userInfo;
 
   const AccountTabs({
     super.key,
-    required this.coursesCompleted,
     required this.currentPathwayProgression,
     required this.userInfo,
   });
@@ -18,12 +17,41 @@ class AccountTabs extends StatefulWidget {
 }
 
 class _AccountTabsState extends State<AccountTabs> {
+  List coursesCompleted = [];
   String tab = "learning_record";
   int maxCompletedCoursItems = 2;
   int maxLearningPathways = 2;
 
+  bool completedCoursesLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SupabaseClient supabase = Supabase.instance.client;
+    _fetchCompletedCourses(supabase);
+  }
+
+  void _fetchCompletedCourses(SupabaseClient supabase) async {
+    setState(() => completedCoursesLoading = true);
+    var currentUserId = supabase.auth.currentUser?.id;
+    if (currentUserId != null || currentUserId != "") {
+      final coursesCompletedResponse = await supabase
+          .from("user_bookings")
+          .select(
+              "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+          .filter("employee", "eq", currentUserId)
+          .filter('status', 'eq', 'complete');
+
+      setState(() {
+        coursesCompleted = coursesCompletedResponse;
+        completedCoursesLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String? email = Supabase.instance.client.auth.currentUser?.email;
     return Column(
       children: [
         Wrap(
@@ -93,14 +121,16 @@ class _AccountTabsState extends State<AccountTabs> {
                           });
                         } else {
                           setState(() {
-                            maxCompletedCoursItems =
-                                widget.coursesCompleted.length;
+                            maxCompletedCoursItems = coursesCompleted.length;
                           });
                         }
                       },
-                      child: Text(maxCompletedCoursItems == 2
-                          ? "Show All"
-                          : "Show Less"),
+                      child: coursesCompleted.isEmpty ||
+                              coursesCompleted.length < 3
+                          ? SizedBox.shrink()
+                          : Text(maxCompletedCoursItems == 2
+                              ? "Show All"
+                              : "Show Less"),
                     ),
                     learnigPathwaysSection(),
                     TextButton(
@@ -131,7 +161,7 @@ class _AccountTabsState extends State<AccountTabs> {
                           color: Colors.black,
                         ),
                         title: const Text("Employee ID"),
-                        subtitle: Text(widget.userInfo["employeeId"]!),
+                        subtitle: Text(widget.userInfo["user_id"]!),
                       ),
                       ListTile(
                         leading: const Icon(
@@ -139,23 +169,25 @@ class _AccountTabsState extends State<AccountTabs> {
                           color: Colors.black,
                         ),
                         title: const Text("Name"),
-                        subtitle: Text(widget.userInfo["name"]!),
+                        subtitle: Text(widget.userInfo["full_name"]!),
                       ),
-                      ListTile(
-                        leading: const Icon(
-                          Icons.alternate_email,
-                          color: Colors.black,
-                        ),
-                        title: const Text("Email"),
-                        subtitle: Text(widget.userInfo["email"]!),
-                      ),
+                      email != null
+                          ? ListTile(
+                              leading: const Icon(
+                                Icons.alternate_email,
+                                color: Colors.black,
+                              ),
+                              title: const Text("Email"),
+                              subtitle: Text(email),
+                            )
+                          : const SizedBox.shrink(),
                       ListTile(
                         leading: const Icon(
                           Icons.phone,
                           color: Colors.black,
                         ),
                         title: const Text("Phone Number"),
-                        subtitle: Text(widget.userInfo["phoneNumber"]!),
+                        subtitle: Text(widget.userInfo["phone"]!),
                       ),
                       ListTile(
                         leading: const Icon(
@@ -178,12 +210,34 @@ class _AccountTabsState extends State<AccountTabs> {
       children: [
         const Text("Courses Completed"),
         const Divider(),
+        completedCoursesLoading
+            ? const SizedBox(
+                height: 150,
+                child: Center(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                )),
+              )
+            : SizedBox(
+                width: double.infinity,
+                child: coursesCompleted.isEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Image.asset("images/empty.png", width: 300),
+                          const Text("No Items", style: TextStyle(fontSize: 18))
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
         for (int courseIndex = 0;
-            courseIndex < widget.coursesCompleted.length;
+            courseIndex < coursesCompleted.length;
             courseIndex++)
           courseIndex < maxCompletedCoursItems
-              ? CompletedCourseCard(
-                  course: widget.coursesCompleted[courseIndex])
+              ? CompletedCourseCard(course: coursesCompleted[courseIndex])
               : const SizedBox.shrink(),
       ],
     );

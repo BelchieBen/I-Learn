@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LearningTypes extends StatefulWidget {
-  final List<String> contentTypes;
+  final List contentTypes;
   const LearningTypes({super.key, required this.contentTypes});
 
   State<LearningTypes> createState() => _LearningTypesState();
@@ -15,9 +15,9 @@ class _LearningTypesState extends State<LearningTypes> {
       child: Wrap(
         spacing: 8,
         children: [
-          for (var type in widget.contentTypes)
+          for (Map<String, dynamic> type in widget.contentTypes)
             Image.asset(
-              "images/contentImages/$type",
+              "images/contentImages/${type["learning_types"]["learning_type"]}",
               height: 25,
             ),
         ],

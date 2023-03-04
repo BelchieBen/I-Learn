@@ -2,8 +2,11 @@ import 'package:booking_app/providers/search_term.dart';
 import 'package:booking_app/providers/searching.dart';
 import 'package:booking_app/src/components/course/course_tags.dart';
 import 'package:booking_app/src/components/course/learning_types.dart';
+import 'package:booking_app/src/pages/courses/course_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/course/course_filter.dart';
 
@@ -17,51 +20,27 @@ class SearchCourses extends StatefulWidget {
 class _SearchCoursesState extends State<SearchCourses> {
   int _selectedSortIndex = 0;
   bool showFilters = false;
+  bool loadingCourses = false;
+  List<Map<String, dynamic>> courses = [];
 
-  final courses = [
-    {
-      "title": "Difficult Conversations",
-      "image": "images/CompanyNews.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Coaching",
-      "image": "images/BackToWork.png",
-      "learningContents": "FaceToFace.png,Video.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Computer Safety",
-      "image": "images/CentralisedSafety Data.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Team Collaboration",
-      "image": "images/Collaboration.png",
-      "learningContents": "EBook.png,ELearning.png,TopTips.png,Online.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "First Aid Training",
-      "image": "images/FirstAid.png",
-      "learningContents": "Video.png,Podcast.png,TopTips.png",
-      "tags": "Duration: 2 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Assertive Communication",
-      "image": "images/ConflictResolution.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 4 Hours,Suitable for everyone",
-    },
-    {
-      "title": "Assertive Communication",
-      "image": "images/ConflictResolution.png",
-      "learningContents": "FaceToFace.png,Podcast.png,TopTips.png,Article.png",
-      "tags": "Duration: 4 Hours,Suitable for everyone",
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final supabase = Supabase.instance.client;
+    _fetchCourseSessions(supabase);
+  }
+
+  void _fetchCourseSessions(SupabaseClient supabase) async {
+    setState(() => loadingCourses = true);
+    final List<
+        Map<String,
+            dynamic>> coursesResponse = await supabase.from("courses").select(
+        "*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))");
+    setState(() {
+      courses = coursesResponse.toList();
+      loadingCourses = false;
+    });
+  }
 
   final sortFilters = [
     {"icon": Icons.keyboard_double_arrow_up, "sortBy": "Relevence"},
@@ -134,7 +113,23 @@ class _SearchCoursesState extends State<SearchCourses> {
                       children: [
                         filterButtons(),
                         showFilters ? searchFilters() : const SizedBox.shrink(),
-                        coursesListView(),
+                        loadingCourses
+                            ? SizedBox(
+                                width: double.infinity,
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: const [
+                                      SizedBox(
+                                        height: 50,
+                                      ),
+                                      CircularProgressIndicator(
+                                        color: Color.fromRGBO(5, 109, 120, 1),
+                                        strokeWidth: 2,
+                                      ),
+                                    ]),
+                              )
+                            : coursesListView(),
                       ],
                     ),
             ),
@@ -250,7 +245,19 @@ class _SearchCoursesState extends State<SearchCourses> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      // CourseDetail(course: item),
+                      CourseDetailPage(
+                    course: course,
+                    showBookBtn: true,
+                  ),
+                ),
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -271,10 +278,10 @@ class _SearchCoursesState extends State<SearchCourses> {
                         style: const TextStyle(fontSize: 18),
                       ),
                       LearningTypes(
-                        contentTypes: course["learningContents"]!.split(","),
+                        contentTypes: course["course_learning_types"]!,
                       ),
                       CourseTags(
-                        tags: course["tags"]!.split(","),
+                        tags: course["course_tags"]!,
                         tagSize: 11,
                       )
                     ],
@@ -291,7 +298,7 @@ class _SearchCoursesState extends State<SearchCourses> {
   Consumer filteredCoursesListView() {
     return Consumer<SearchTerm>(
       builder: (context, model, child) {
-        List<Map<String, String>> filtered = [];
+        List<Map<String, dynamic>> filtered = [];
         if (model.searchTerm != "") {
           filtered = courses
               .where(
@@ -313,7 +320,19 @@ class _SearchCoursesState extends State<SearchCourses> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          // CourseDetail(course: item),
+                          CourseDetailPage(
+                        course: course,
+                        showBookBtn: true,
+                      ),
+                    ),
+                  );
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
@@ -334,11 +353,10 @@ class _SearchCoursesState extends State<SearchCourses> {
                             style: const TextStyle(fontSize: 18),
                           ),
                           LearningTypes(
-                            contentTypes:
-                                course["learningContents"]!.split(","),
+                            contentTypes: course["course_learning_types"]!,
                           ),
                           CourseTags(
-                            tags: course["tags"]!.split(","),
+                            tags: course["course_tags"]!,
                             tagSize: 11,
                           )
                         ],

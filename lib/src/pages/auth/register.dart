@@ -51,16 +51,28 @@ class _RegisterPageState extends State<RegisterPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     AuthResponse response =
         await supabase.auth.signUp(email: email, password: password!);
-    if (response.user != null && response.session != null) {
-      setState(() {
-        user = response.user;
-      });
 
-      prefs.setString("currentUser", response.session.toString());
-      setState(() => isLoading = false);
-      if (context.mounted) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const AppScaffold()));
+    if (response.user != null && response.session != null) {
+      final List<Map<String, dynamic>> profile =
+          await supabase.from("user_profile").insert({
+        "user_id": response.user?.id,
+        "profile_img": "default.png",
+        "job_title": jobTitle,
+        "dob": dob,
+        "full_name": fullName
+      }).select();
+
+      if (profile.isNotEmpty) {
+        setState(() {
+          user = response.user;
+        });
+
+        prefs.setString("currentUser", response.session.toString());
+        setState(() => isLoading = false);
+        if (context.mounted) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const AppScaffold()));
+        }
       }
     }
   }

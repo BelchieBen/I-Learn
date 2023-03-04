@@ -1,9 +1,11 @@
 import 'package:booking_app/src/components/course/course_information.dart';
 import 'package:booking_app/src/components/forms/booking_form.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BookingStepper extends StatefulWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const BookingStepper({
     super.key,
     required this.course,
@@ -16,13 +18,35 @@ class BookingStepper extends StatefulWidget {
 class _BookingStepperState extends State<BookingStepper> {
   int _index = 0;
   int selectedDateIndex = 0;
+  bool loadingSessions = false;
+
+  var loggerNoStack = Logger(
+    printer: PrettyPrinter(methodCount: 0),
+  );
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final List<String> dates = [
-    "12-01-2022 9:00 - 12-01-2022 17:00",
-    "24-02-2022 9:00 - 24-02-2022 17:00",
-  ];
+  List dates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    SupabaseClient supabase = Supabase.instance.client;
+    _fetchCourseSessions(supabase);
+  }
+
+  void _fetchCourseSessions(SupabaseClient supabase) async {
+    setState(() => loadingSessions = true);
+    final sessions = await supabase
+        .from("sessions")
+        .select("*")
+        .filter("course_id", "eq", widget.course["id"]!);
+
+    setState(() {
+      dates = sessions;
+      loadingSessions = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +132,15 @@ class _BookingStepperState extends State<BookingStepper> {
                 CourseInformation(course: widget.course),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
-                  child: Text(dates[selectedDateIndex]),
+                  child: dates.isEmpty
+                      ? const SizedBox.shrink()
+                      : Text(dates[selectedDateIndex]["start_date"]! +
+                          " " +
+                          dates[selectedDateIndex]["start_time"]! +
+                          " - " +
+                          dates[selectedDateIndex]["end_date"]! +
+                          " " +
+                          dates[selectedDateIndex]["end_time"]!),
                 ),
                 BookingForm(
                   formKey: formKey,
@@ -124,34 +156,55 @@ class _BookingStepperState extends State<BookingStepper> {
   Column dateSelector() {
     return Column(
       children: [
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: dates.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12),
+        loadingSessions
+            ? const SizedBox(
+                width: double.infinity,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1,
+                    color: Color.fromRGBO(5, 109, 120, 1),
+                  ),
                 ),
-              ),
-              title: Text(dates[index]),
-              trailing: selectedDateIndex == index
-                  ? const Icon(
-                      Icons.check_circle_outline,
-                      color: Color.fromRGBO(92, 199, 208, 1),
-                    )
-                  : null,
-              tileColor: selectedDateIndex == index
-                  ? const Color.fromRGBO(210, 246, 250, 1)
-                  : null,
-              onTap: () {
-                setState(() {
-                  selectedDateIndex = index;
-                });
-              },
-            );
-          },
-        ),
+              )
+            : dates.isEmpty && !loadingSessions
+                ? const SizedBox(
+                    width: double.infinity,
+                    child: Center(child: Text("No Sessions Available")),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: dates.isEmpty ? 0 : dates.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(12),
+                          ),
+                        ),
+                        title: Text(dates[index]["start_date"]! +
+                            ": " +
+                            dates[index]["start_time"]!.substring(0, 5) +
+                            " - " +
+                            dates[index]["end_date"]! +
+                            ": " +
+                            dates[index]["end_time"]!.substring(0, 5)),
+                        trailing: selectedDateIndex == index
+                            ? const Icon(
+                                Icons.check_circle_outline,
+                                color: Color.fromRGBO(92, 199, 208, 1),
+                              )
+                            : null,
+                        tileColor: selectedDateIndex == index
+                            ? const Color.fromRGBO(210, 246, 250, 1)
+                            : null,
+                        onTap: () {
+                          setState(() {
+                            selectedDateIndex = index;
+                          });
+                        },
+                      );
+                    },
+                  ),
       ],
     );
   }
@@ -163,7 +216,9 @@ class _BookingStepperState extends State<BookingStepper> {
         Expanded(
             child: ElevatedButton(
                 onPressed: details.onStepContinue,
-                child: Text(isLastStep ? 'Submit' : 'Next'))),
+                child: dates.isEmpty
+                    ? const SizedBox.shrink()
+                    : Text(isLastStep ? 'Submit' : 'Next'))),
         const SizedBox(
           width: 12,
         ),

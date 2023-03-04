@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class LearningPathwayCard extends StatelessWidget {
-  final Map<String, String> course;
+  final Map<String, dynamic> course;
   const LearningPathwayCard({super.key, required this.course});
 
   @override
@@ -54,7 +54,8 @@ class LearningPathwayCard extends StatelessWidget {
     );
   }
 
-  StepProgressIndicator learningPathwayProgression(Map<String, String> course) {
+  StepProgressIndicator learningPathwayProgression(
+      Map<String, dynamic> course) {
     return StepProgressIndicator(
       totalSteps: course["steps"]!.split(",").toList().length,
       currentStep: int.parse(course["pathwayStep"]!),
