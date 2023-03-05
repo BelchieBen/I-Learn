@@ -1,4 +1,5 @@
 import 'package:booking_app/src/components/course/learning_types.dart';
+import 'package:booking_app/src/pages/booking/select_new_date.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -259,7 +260,17 @@ class _MyBookingState extends State<MyBookings> {
                     width: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectNewDate(
+                            course: booking["sessions"]["courses"]!,
+                            bookingId: booking["id"]!,
+                          ),
+                        ),
+                      );
+                    },
                     child: const Text("Reschedule"),
                   ),
                 ],

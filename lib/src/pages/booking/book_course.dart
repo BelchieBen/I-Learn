@@ -32,7 +32,9 @@ class _CourseBookingPageState extends State<CourseBookingPage> {
             constraints: BoxConstraints(
                 minHeight: viewportConstraints.maxHeight,
                 maxHeight: viewportConstraints.maxHeight),
-            child: BookingStepper(course: widget.course),
+            child: BookingStepper(
+              course: widget.course,
+            ),
           ),
         );
       }),

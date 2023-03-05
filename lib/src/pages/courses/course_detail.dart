@@ -157,7 +157,9 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
           MaterialPageRoute(
             builder: (context) =>
                 // CourseDetail(course: item),
-                CourseBookingPage(course: widget.course),
+                CourseBookingPage(
+              course: widget.course,
+            ),
           ),
         );
       },
