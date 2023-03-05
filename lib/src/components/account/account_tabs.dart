@@ -127,7 +127,7 @@ class _AccountTabsState extends State<AccountTabs> {
                       },
                       child: coursesCompleted.isEmpty ||
                               coursesCompleted.length < 3
-                          ? SizedBox.shrink()
+                          ? const SizedBox.shrink()
                           : Text(maxCompletedCoursItems == 2
                               ? "Show All"
                               : "Show Less"),
