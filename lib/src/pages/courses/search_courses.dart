@@ -10,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../components/course/course_filter.dart';
 
+typedef StringCallback = void Function(String? val);
+
 class SearchCourses extends StatefulWidget {
   const SearchCourses({super.key});
 
@@ -18,19 +20,25 @@ class SearchCourses extends StatefulWidget {
 }
 
 class _SearchCoursesState extends State<SearchCourses> {
+  SupabaseClient supabase = Supabase.instance.client;
   int _selectedSortIndex = 0;
   bool showFilters = false;
   bool loadingCourses = false;
   List<Map<String, dynamic>> courses = [];
 
+  // Filters
+  String? type;
+  String? category;
+  String? courseLevel;
+  String? isMandatory;
+
   @override
   void initState() {
     super.initState();
-    final supabase = Supabase.instance.client;
-    _fetchCourseSessions(supabase);
+    _fetchCourseSessions();
   }
 
-  void _fetchCourseSessions(SupabaseClient supabase) async {
+  void _fetchCourseSessions() async {
     setState(() => loadingCourses = true);
     final List<
         Map<String,
@@ -88,7 +96,7 @@ class _SearchCoursesState extends State<SearchCourses> {
   ];
 
   final List<String> level = [
-    'Entry Level',
+    'Beginner',
     'Advanced',
     'Expert',
   ];
@@ -226,6 +234,16 @@ class _SearchCoursesState extends State<SearchCourses> {
           scrollDirection: Axis.horizontal,
           children: [
             CourseFilter(
+              clearFilterCallback: _fetchCourseSessions,
+              setValue: (value) {
+                setState(() {
+                  type = value;
+                  courses = courses
+                      .where(
+                          (element) => element["type"]!.toLowerCase() == value)
+                      .toList();
+                });
+              },
               filterItems: courseType,
               hintText: "Course Type",
             ),
@@ -233,6 +251,16 @@ class _SearchCoursesState extends State<SearchCourses> {
               width: 8,
             ),
             CourseFilter(
+              clearFilterCallback: _fetchCourseSessions,
+              setValue: (value) {
+                setState(() {
+                  type = value;
+                  courses = courses
+                      .where((element) =>
+                          element["category"]!.toLowerCase() == value)
+                      .toList();
+                });
+              },
               filterItems: courseCategory,
               hintText: "Category",
             ),
@@ -240,6 +268,16 @@ class _SearchCoursesState extends State<SearchCourses> {
               width: 8,
             ),
             CourseFilter(
+              clearFilterCallback: _fetchCourseSessions,
+              setValue: (value) {
+                setState(() {
+                  type = value;
+                  courses = courses
+                      .where(
+                          (element) => element["level"]!.toLowerCase() == value)
+                      .toList();
+                });
+              },
               filterItems: level,
               hintText: "Level",
             ),
@@ -247,6 +285,16 @@ class _SearchCoursesState extends State<SearchCourses> {
               width: 8,
             ),
             CourseFilter(
+              clearFilterCallback: _fetchCourseSessions,
+              setValue: (value) {
+                setState(() {
+                  type = value;
+                  courses = courses
+                      .where((element) =>
+                          element["required"]!.toLowerCase() == value)
+                      .toList();
+                });
+              },
               filterItems: mandatory,
               hintText: "Mandatory",
             ),
