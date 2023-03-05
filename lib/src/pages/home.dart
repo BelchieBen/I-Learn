@@ -37,7 +37,8 @@ class _HomeState extends State<Home> {
         .from("user_bookings")
         .select(
             "*, sessions(*,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
-        .neq("status", "complete");
+        .neq("status", "complete")
+        .neq("status", "Cancelled");
     setState(() {
       upcomingItems = upcomingCourses.toList();
     });
