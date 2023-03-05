@@ -42,6 +42,30 @@ class _SearchCoursesState extends State<SearchCourses> {
     });
   }
 
+  void _handleSort(String sortBy) {
+    List<Map<String, dynamic>> coursesCopy = courses;
+
+    switch (sortBy) {
+      case "Name Descending":
+        coursesCopy.sort((a, b) => (b['title']).compareTo(a['title']));
+        break;
+      case "Name Ascending":
+        coursesCopy.sort((a, b) => (a['title']).compareTo(b['title']));
+        break;
+      case "Recently Added":
+        coursesCopy
+            .sort((a, b) => (b['created_at']).compareTo(a['created_at']));
+        break;
+      default:
+        coursesCopy.shuffle();
+        break;
+    }
+
+    setState(() {
+      courses = coursesCopy;
+    });
+  }
+
   final sortFilters = [
     {"icon": Icons.keyboard_double_arrow_up, "sortBy": "Relevence"},
     {"icon": Icons.arrow_downward, "sortBy": "Name Descending"},
@@ -414,15 +438,19 @@ class _SearchCoursesState extends State<SearchCourses> {
                 ),
                 for (var sort in sortFilters)
                   ListTile(
-                      leading: Icon(sort["icon"]! as IconData?),
-                      selected: _selectedSortIndex == sortFilters.indexOf(sort),
-                      title: Text(sort["sortBy"]! as String),
-                      onTap: () => {
-                            Navigator.of(context).pop(),
-                            setState(() {
-                              _selectedSortIndex = sortFilters.indexOf(sort);
-                            })
-                          }),
+                    leading: Icon(sort["icon"]! as IconData?),
+                    selected: _selectedSortIndex == sortFilters.indexOf(sort),
+                    title: Text(sort["sortBy"]! as String),
+                    onTap: () => {
+                      _handleSort(sort["sortBy"]! as String),
+                      Navigator.of(context).pop(),
+                      setState(
+                        () {
+                          _selectedSortIndex = sortFilters.indexOf(sort);
+                        },
+                      )
+                    },
+                  ),
               ],
             ),
           );
