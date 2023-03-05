@@ -11,6 +11,7 @@ class MyBookings extends StatefulWidget {
 }
 
 class _MyBookingState extends State<MyBookings> {
+  SupabaseClient supabase = Supabase.instance.client;
   List myBookings = [];
   bool loadingMyBookings = false;
 
@@ -46,9 +47,18 @@ class _MyBookingState extends State<MyBookings> {
         return const Color.fromRGBO(38, 71, 218, 1);
       case "declined":
         return const Color.fromRGBO(226, 45, 56, 1);
+      case "cancelled":
+        return const Color.fromRGBO(47, 64, 81, 1);
       default:
         return const Color.fromRGBO(255, 255, 255, 1);
     }
+  }
+
+  _cancelBooking(id) async {
+    await supabase
+        .from("user_bookings")
+        .update({"status": "Cancelled"}).match({"id": id});
+    _fetchMyBookings(supabase);
   }
 
   @override
@@ -230,7 +240,11 @@ class _MyBookingState extends State<MyBookings> {
               Row(
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: booking["status"]! == "Cancelled"
+                        ? null
+                        : () {
+                            _cancelBooking(booking["id"]!);
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromRGBO(244, 245, 246, 1),
                     ),
