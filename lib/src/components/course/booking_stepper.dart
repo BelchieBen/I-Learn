@@ -1,7 +1,5 @@
 import 'package:booking_app/src/components/course/course_information.dart';
 import 'package:booking_app/src/components/forms/booking_form.dart';
-import 'package:booking_app/src/components/inputs/text_form_input.dart';
-import 'package:booking_app/src/components/scaffold/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,15 +16,9 @@ class BookingStepper extends StatefulWidget {
 }
 
 class _BookingStepperState extends State<BookingStepper> {
-  final supabase = Supabase.instance.client;
   int _index = 0;
   int selectedDateIndex = 0;
   bool loadingSessions = false;
-  bool submittingBooking = false;
-
-  String? howIdentified;
-  String? howApply;
-  String? howMeasure;
 
   var loggerNoStack = Logger(
     printer: PrettyPrinter(methodCount: 0),
@@ -54,34 +46,6 @@ class _BookingStepperState extends State<BookingStepper> {
       dates = sessions;
       loadingSessions = false;
     });
-  }
-
-  bool _assertNotEmpty() {
-    if (howIdentified != null && howApply != null && howMeasure != null) {
-      return true;
-    }
-    return false;
-  }
-
-  void _submitBooking() async {
-    setState(() => submittingBooking = true);
-    final response = await supabase.from("user_bookings").insert({
-      "employee": supabase.auth.currentUser?.id,
-      "session": dates[selectedDateIndex]["id"]!,
-      "status": "Pending"
-    });
-    setState(() => submittingBooking = false);
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        successSnackbar(),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AppScaffold(),
-        ),
-      );
-    }
   }
 
   @override
@@ -132,10 +96,7 @@ class _BookingStepperState extends State<BookingStepper> {
           }
           if (isLastStep) {
             if (formKey.currentState!.validate()) {
-              formKey.currentState!.save();
-              if (_assertNotEmpty()) {
-                _submitBooking();
-              }
+              // Process data.
             }
           }
         },
@@ -181,42 +142,8 @@ class _BookingStepperState extends State<BookingStepper> {
                           " " +
                           dates[selectedDateIndex]["end_time"]!),
                 ),
-                Form(
-                  key: formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormInput(
-                        labelText: "How has this training been identified?",
-                        numLines: 3,
-                        isDense: false,
-                        obscureText: false,
-                        setValue: (value) => setState(() {
-                          howIdentified = value;
-                        }),
-                      ),
-                      TextFormInput(
-                        labelText:
-                            "How will you apply the learning in your role?",
-                        numLines: 3,
-                        isDense: false,
-                        obscureText: false,
-                        setValue: (value) => setState(() {
-                          howApply = value;
-                        }),
-                      ),
-                      TextFormInput(
-                        labelText:
-                            "How will you measure the success of this learning?",
-                        numLines: 3,
-                        isDense: false,
-                        obscureText: false,
-                        setValue: (value) => setState(() {
-                          howMeasure = value;
-                        }),
-                      ),
-                    ],
-                  ),
+                BookingForm(
+                  formKey: formKey,
                 )
               ],
             ),
@@ -288,16 +215,10 @@ class _BookingStepperState extends State<BookingStepper> {
       children: [
         Expanded(
             child: ElevatedButton(
-                onPressed: submittingBooking ? null : details.onStepContinue,
+                onPressed: details.onStepContinue,
                 child: dates.isEmpty
                     ? const SizedBox.shrink()
-                    : submittingBooking
-                        ? const SizedBox(
-                            height: 30,
-                            width: 30,
-                            child: CircularProgressIndicator(strokeWidth: 1),
-                          )
-                        : Text(isLastStep ? 'Submit' : 'Next'))),
+                    : Text(isLastStep ? 'Submit' : 'Next'))),
         const SizedBox(
           width: 12,
         ),
@@ -311,32 +232,6 @@ class _BookingStepperState extends State<BookingStepper> {
                   onPressed: details.onStepCancel,
                   child: const Text('Back')))
       ],
-    );
-  }
-
-  SnackBar successSnackbar() {
-    return SnackBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      behavior: SnackBarBehavior.floating,
-      content: Container(
-        padding: const EdgeInsets.all(16),
-        height: 60,
-        decoration: BoxDecoration(
-            color: const Color.fromRGBO(0, 184, 110, 1),
-            borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            Icon(
-              Icons.check_circle_outline,
-              color: Color.fromRGBO(167, 251, 217, 1),
-            ),
-            SizedBox(width: 6),
-            Text("Booking Submitted"),
-          ],
-        ),
-      ),
     );
   }
 }
