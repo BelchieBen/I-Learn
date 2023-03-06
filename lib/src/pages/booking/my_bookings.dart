@@ -15,6 +15,7 @@ class _MyBookingState extends State<MyBookings> {
   SupabaseClient supabase = Supabase.instance.client;
   List myBookings = [];
   bool loadingMyBookings = false;
+  bool showCancelled = false;
 
   var loggerNoStack = Logger(
     printer: PrettyPrinter(methodCount: 0),
@@ -29,15 +30,28 @@ class _MyBookingState extends State<MyBookings> {
 
   void _fetchMyBookings(SupabaseClient supabase) async {
     setState(() => loadingMyBookings = true);
-    final List myBookingsResponse = await supabase
-        .from("user_bookings")
-        .select(
-            "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
-        .neq("status", "complete");
-    setState(() {
-      myBookings = myBookingsResponse;
-      loadingMyBookings = false;
-    });
+    if (showCancelled) {
+      final List myBookingsResponse = await supabase
+          .from("user_bookings")
+          .select(
+              "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+          .neq("status", "complete");
+      setState(() {
+        myBookings = myBookingsResponse;
+        loadingMyBookings = false;
+      });
+    } else {
+      final List myBookingsResponse = await supabase
+          .from("user_bookings")
+          .select(
+              "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
+          .neq("status", "complete")
+          .neq("status", "Cancelled");
+      setState(() {
+        myBookings = myBookingsResponse;
+        loadingMyBookings = false;
+      });
+    }
   }
 
   Color getStatusColor(String status) {
@@ -131,9 +145,17 @@ class _MyBookingState extends State<MyBookings> {
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text("My Bookings"),
-          Divider(),
+        children: [
+          const Text("My Bookings"),
+          const Divider(),
+          TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            onPressed: () {
+              setState(() => showCancelled = !showCancelled);
+              _fetchMyBookings(supabase);
+            },
+            child: Text(showCancelled ? "Hide Cancelled" : "Show Cancelled"),
+          ),
         ],
       ),
     );
