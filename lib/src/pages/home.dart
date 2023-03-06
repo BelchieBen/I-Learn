@@ -201,7 +201,7 @@ class _HomeState extends State<Home> {
                                       builder: (context) =>
                                           // CourseDetail(course: item),
                                           CourseDetailPage(
-                                        course: item,
+                                        course: item["sessions"]["courses"],
                                         showBookBtn: false,
                                       ),
                                     ),
