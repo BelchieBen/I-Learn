@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
         .from("courses")
         .select(
             "*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))")
+        .order("created_at")
         .limit(4);
     setState(() {
       recomendedCourses = courses.toList();

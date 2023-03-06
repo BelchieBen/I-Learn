@@ -30,7 +30,8 @@ class _CancelBooking extends State<CancelBooking> {
         .select(
             "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
         .neq("status", "complete")
-        .neq("status", "Cancelled");
+        .neq("status", "Cancelled")
+        .order("created_at");
     setState(() {
       myBookings = myBookingsResponse;
       loadingMyBookings = false;
