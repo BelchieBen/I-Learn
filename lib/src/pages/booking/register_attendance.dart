@@ -89,6 +89,7 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
         );
       }
     } catch (e) {
+      setState(() => submittingBooking = false);
       ScaffoldMessenger.of(context).showSnackBar(
         errorSnackbar(),
       );
