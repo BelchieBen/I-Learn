@@ -177,25 +177,6 @@ class _AppScaffoldState extends State<AppScaffold> {
             icon: destination.icon,
           );
         }),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
-          child: Divider(),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(28, 0, 16, 10),
-          child: Text(
-            'About & Contact',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ),
-        ...aboutDestinations.map((PageDestination destination) {
-          return NavigationDrawerDestination(
-            label: Text(
-              destination.label,
-            ),
-            icon: destination.icon,
-          );
-        }),
       ],
     );
   }

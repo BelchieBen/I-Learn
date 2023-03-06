@@ -85,21 +85,3 @@ const List<PageDestination> bookingDestinations = <PageDestination>[
         color: Colors.white,
       )),
 ];
-
-// Pages related to help & about, shown in the side drawer
-const List<PageDestination> aboutDestinations = <PageDestination>[
-  PageDestination(
-      'About L&D',
-      Icon(Icons.info_outlined),
-      Icon(
-        Icons.info,
-        color: Colors.white,
-      )),
-  PageDestination(
-      'Contact L&D',
-      Icon(Icons.message_outlined),
-      Icon(
-        Icons.message,
-        color: Colors.white,
-      )),
-];
