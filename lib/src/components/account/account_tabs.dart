@@ -3,6 +3,9 @@ import 'package:booking_app/src/components/course/learning_pathway_card.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Tabs to seperate the UI on the account page
+// @param currentPathwayProgression, a List of courses the employee is progressing in
+// @param userInfo, employees profile information
 class AccountTabs extends StatefulWidget {
   final List<Map<String, String>> currentPathwayProgression;
   final Map<String, dynamic> userInfo;
@@ -31,9 +34,12 @@ class _AccountTabsState extends State<AccountTabs> {
     _fetchCompletedCourses(supabase);
   }
 
+  // Method to fetch the current users completed courses
   void _fetchCompletedCourses(SupabaseClient supabase) async {
     setState(() => completedCoursesLoading = true);
     var currentUserId = supabase.auth.currentUser?.id;
+
+    // Before making API calls, ensure we have a current user
     if (currentUserId != null || currentUserId != "") {
       final coursesCompletedResponse = await supabase
           .from("user_bookings")
@@ -54,9 +60,12 @@ class _AccountTabsState extends State<AccountTabs> {
     String? email = Supabase.instance.client.auth.currentUser?.email;
     return Column(
       children: [
+        // Instead of using the Flutter Tab components I have implemented
+        // my own due to rendering issues and applying set heights
         Wrap(
           children: [
             Container(
+              // Add an actiove state if this is the active tab
               decoration: tab == "learning_record"
                   ? const BoxDecoration(
                       border: Border(
@@ -81,6 +90,7 @@ class _AccountTabsState extends State<AccountTabs> {
               ),
             ),
             Container(
+              // Add an actiove state if this is the active tab
               decoration: tab == "personal_details"
                   ? const BoxDecoration(
                       border: Border(
@@ -106,6 +116,7 @@ class _AccountTabsState extends State<AccountTabs> {
             ),
           ],
         ),
+        // Conditional to change UI content based on the current tab
         (tab == "learning_record")
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -152,6 +163,7 @@ class _AccountTabsState extends State<AccountTabs> {
                   ],
                 ),
               )
+            // Conditional to change UI content based on the current tab
             : (tab == "personal_details")
                 ? Column(
                     children: [
@@ -204,6 +216,7 @@ class _AccountTabsState extends State<AccountTabs> {
     );
   }
 
+  // Component to show a list of completed courses
   Column coursesCompletedSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,6 +246,7 @@ class _AccountTabsState extends State<AccountTabs> {
                       )
                     : const SizedBox.shrink(),
               ),
+        // Only show 3 courses and then allow user to expand the list with button
         for (int courseIndex = 0;
             courseIndex < coursesCompleted.length;
             courseIndex++)

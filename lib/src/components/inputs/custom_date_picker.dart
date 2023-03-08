@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+// Creating a custom type for calling setState in the parent widget
 typedef StringCallback = void Function(String? val);
 
+// This component is a custom date selector as the Material selector's behaviour did not match Helix's guidelines
 class CustomDateFormInput extends StatefulWidget {
   final String labelText;
   final bool isDense;
@@ -58,6 +60,7 @@ class _CustomDateFormInputState extends State<CustomDateFormInput> {
             ),
             readOnly: true,
             onTap: () async {
+              // Function to show the devices native calender widget to select a date
               DateTime? pickedDate = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),

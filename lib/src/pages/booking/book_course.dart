@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../util/resolve_header_color.dart';
 
+// Page to contain the journey when booking a session
 class CourseBookingPage extends StatefulWidget {
   final Map<String, dynamic> course;
   const CourseBookingPage({
@@ -32,6 +33,8 @@ class _CourseBookingPageState extends State<CourseBookingPage> {
             constraints: BoxConstraints(
                 minHeight: viewportConstraints.maxHeight,
                 maxHeight: viewportConstraints.maxHeight),
+
+            // The page content is a sub component, the booking stepper. This contains the selectable dates and booking form
             child: BookingStepper(
               course: widget.course,
             ),

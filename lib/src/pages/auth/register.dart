@@ -19,6 +19,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final supabase = Supabase.instance.client;
 
+  // Input field values
   String? fullName;
 
   String? jobTitle;
@@ -35,24 +36,30 @@ class _RegisterPageState extends State<RegisterPage> {
 
   User? user;
 
+  // Loading state
   bool isLoading = false;
 
+  // Method which the form calls when the submit button is tapped
   void onSubmit() {
     if (RegisterPage.formKey.currentState!.validate()) {
       setState(() => isLoading = true);
       RegisterPage.formKey.currentState!.save();
       if (_validateValues()) {
+        // Calling async function here as this method cannot be asynchronous
         _registerUser();
       }
     }
   }
 
+  // Async Method to signup a user to Supbase and add the new user to the device preferences as the current user.
   void _registerUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     AuthResponse response =
         await supabase.auth.signUp(email: email, password: password!);
 
+    // Validating if the signup was a success
     if (response.user != null && response.session != null) {
+      // Create a profile for the new user
       final List<Map<String, dynamic>> profile =
           await supabase.from("user_profile").insert({
         "user_id": response.user?.id,
@@ -69,6 +76,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
         prefs.setString("currentUser", response.session.toString());
         setState(() => isLoading = false);
+
+        // Redirect to the homepage
         if (context.mounted) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const AppScaffold()));
@@ -77,6 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // Helper method to validate the form input's before sending the data to Supabase
   bool _validateValues() {
     if (fullName != null &&
         jobTitle != null &&
@@ -140,6 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                // Custom reusable form component which are styled aligned with Helix
                                 TextFormInput(
                                   labelText: "Full Name",
                                   numLines: 1,

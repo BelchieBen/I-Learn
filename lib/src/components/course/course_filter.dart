@@ -4,9 +4,17 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-typedef StringCallback = void Function(String? val);
-typedef ClearFilter = void Function();
+// Custom type definitions
+typedef StringCallback = void Function(
+    String? val); // Calls setState on parent widget
+typedef ClearFilter = void
+    Function(); // Function to clear the filter on parent widget
 
+// Reusable dropdown button to allow users to filter search results
+// @param, filterItems, A List of items to include in the dropdown
+// @param, hintText, The text to display when there is no item selected
+// @param, setValue, the function to set parents state for the input value
+// @param, clearFilterCallback, the function to remove the selected value on parent
 class CourseFilter extends StatefulWidget {
   final List<String> filterItems;
   final String hintText;
@@ -36,6 +44,8 @@ class _CourseFilterState extends State<CourseFilter> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color.fromRGBO(110, 120, 129, 1)),
       ),
+
+      // Change the content of the button if there is a slected value
       child: selectedValue != null
           ? Row(
               children: [

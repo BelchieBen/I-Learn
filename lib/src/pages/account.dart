@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// This widget is the account page, multiple sub-widgets are used in this widget
+// to make-up the page.
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
 
@@ -30,7 +32,10 @@ class _MyAccountState extends State<MyAccount> {
     _fetchUserProfile(supabase);
   }
 
+  // Private method to get the user profile from Supabase db, it first validates if we have
+  // an authenticated user and then queries the db for a user matching the current user's ID
   void _fetchUserProfile(SupabaseClient supabase) async {
+    // Loading state to control when to display an indicator
     setState(() => loadingAccount = true);
     var currentUserId = supabase.auth.currentUser?.id;
     if (currentUserId != null || currentUserId != "") {
@@ -47,6 +52,9 @@ class _MyAccountState extends State<MyAccount> {
     }
   }
 
+  // Private method to fetch the courses a user has completed from Supabase db, again I
+  // validate if we have a current user and query multiple tables through foreign keys
+  // to get the information needed to make up the card.
   void _fetchCompletedCourses(SupabaseClient supabase) async {
     var currentUserId = supabase.auth.currentUser?.id;
     if (currentUserId != null || currentUserId != "") {
@@ -84,14 +92,6 @@ class _MyAccountState extends State<MyAccount> {
     },
   ];
 
-  static const userInfo = {
-    "employeeId": "123456",
-    "name": "Ben Belcher",
-    "email": "benjamin.belcher@ideagen.com",
-    "phoneNumber": "09765434567",
-    "dob": "01/01/2000",
-  };
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -102,6 +102,7 @@ class _MyAccountState extends State<MyAccount> {
               minHeight: viewportConstraints.maxHeight,
               minWidth: viewportConstraints.maxWidth,
               maxWidth: viewportConstraints.maxWidth),
+          // Wrapping the page in a theme to customise the colours over the default theme I set
           child: Theme(
             data: ThemeData(
               colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -131,6 +132,8 @@ class _MyAccountState extends State<MyAccount> {
     });
   }
 
+  // Component to display the header section in the accounts page, showing the users
+  // full name, job title and profile photo.
   Container accountProfile() {
     return Container(
       height: 250,

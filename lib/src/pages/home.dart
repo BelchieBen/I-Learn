@@ -21,6 +21,8 @@ class _HomeState extends State<Home> {
     _fetchUpcomingCourses(supabase);
   }
 
+  // Method to fetch 4 courses to be displayed in the recomended courses section
+  // The method sends a query to the Supabase db courses table, orders results and limits them to 4
   void _fetchRecomendedCourses(SupabaseClient supabase) async {
     final courses = await supabase
         .from("courses")
@@ -33,6 +35,8 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // Method to fetch any Sessions the user has booked from Supabase db, I exclude Sessions that
+  // are marked as completed or cancelled as they are not required for this UI section.
   void _fetchUpcomingCourses(SupabaseClient supabase) async {
     final upcomingCourses = await supabase
         .from("user_bookings")
@@ -49,6 +53,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
+        // I have used a SingleChildScrollView to make the entire page scrollable
+        // which keeps the UI responsive
         return SingleChildScrollView(
             child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
@@ -61,6 +67,7 @@ class _HomeState extends State<Home> {
                 const Divider(),
                 Align(
                   alignment: Alignment.center,
+                  // Checking to see if we have any courses to display, if not show a loading indicator
                   child: recomendedCourses.isEmpty
                       ? Column(children: const [
                           SizedBox(
@@ -78,6 +85,8 @@ class _HomeState extends State<Home> {
                           spacing: 5,
                           runSpacing: 5,
                           children: [
+                            // I chose to use a range based for loop for better readability
+                            // when accessing the array items properties
                             for (var item in recomendedCourses)
                               FractionallySizedBox(
                                 widthFactor: 0.49,
@@ -90,7 +99,6 @@ class _HomeState extends State<Home> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              // CourseDetail(course: item),
                                               CourseDetailPage(
                                             course: item,
                                             showBookBtn: true,
@@ -131,6 +139,8 @@ class _HomeState extends State<Home> {
                             ),
                             const Text("Your upcoming courses"),
                             const Divider(),
+                            // More validation to check if the courses list is empty
+                            // and display a loading indicator if we have no items
                             upcomingItems.isEmpty
                                 ? SizedBox(
                                     width: double.infinity,
@@ -149,6 +159,8 @@ class _HomeState extends State<Home> {
                                     ),
                                   )
                                 : const SizedBox.shrink(),
+                            // I chose to use a range based for loop for better readability
+                            // when accessing the array items properties
                             for (var item in upcomingItems)
                               ListTile(
                                 leading: Image.asset(

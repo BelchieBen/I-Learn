@@ -4,6 +4,8 @@ import 'package:logger/logger.dart';
 import 'course_tags.dart';
 import 'learning_types.dart';
 
+// Reusable component to display courses that a user has completed.
+// @param course, The course to populate the card fields
 class CompletedCourseCard extends StatelessWidget {
   final Map<String, dynamic> course;
   const CompletedCourseCard({super.key, required this.course});

@@ -1,11 +1,8 @@
-// ignore_for_file: slash_for_doc_comments
-
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-/**
- * The Course image and supporting text shown at the top of pages containing the course
- */
+// The Course image and supporting text shown at the top of pages containing the course
+// @param course, a course object from the database Courses table
 class CourseInformation extends StatefulWidget {
   final Map<String, dynamic> course;
   const CourseInformation({

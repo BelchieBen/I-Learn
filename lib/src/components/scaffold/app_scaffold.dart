@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/resolve_header_color.dart';
 
+// This component is the base app scaffold, including the bottom nav bar and the side drawer that displays on every page.
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
 
@@ -38,7 +39,9 @@ class _AppScaffoldState extends State<AppScaffold> {
   int screenIndex = 0;
   late bool showNavigationDrawer;
 
+  // Method to change which page is displayed when the user taps an item in either the bottom nav bar or side drawer
   void handleScreenChanged(int selectedScreen) {
+    // Validate if the screen selected is valid. There is only 4 pages in the base horizontal navigation layer.
     if (selectedScreen < 4) {
       setState(() {
         screenIndex = selectedScreen;
@@ -52,6 +55,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     }
   }
 
+  // Small component to build the overall app scaffold
   Widget buildAppScaffold() {
     return Scaffold(
       key: scaffoldKey,
@@ -62,8 +66,11 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
 
+  // A widget for the top app bar, changes the UI depending on global state.
   AppBar appHeader() {
     return AppBar(
+        // When the user is searching on the Search Courses Page, render a text field
+        // and change the leading icon from the hamburger to a back arrow
         title: context.watch<Searching>().isSearching
             ? TextField(
                 onChanged: (value) {
@@ -86,6 +93,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                 icon: const Icon(Icons.arrow_back))
             : null,
         actions: [
+          // Change the action button on the account page to a logout button
           screenIndex == 3
               ? IconButton(
                   onPressed: () {
@@ -100,6 +108,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   },
                   icon: const Icon(Icons.logout),
                 )
+              // On the search page and the user is not searching, render a search icon button
               : (screenIndex == 1) && (!context.watch<Searching>().isSearching)
                   ? IconButton(
                       onPressed: () {
@@ -109,6 +118,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                     )
                   : const SizedBox()
         ],
+        // Change the background colour of the app bar on the account page to match the profile component
         backgroundColor: screenIndex == 3
             ? const Color.fromRGBO(228, 252, 255, 1)
             : resolveAppHeaderColor());
@@ -120,14 +130,17 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
 
+  // The Material Bottom Navigation Bar
   NavigationBar bottomNavBar() {
     return NavigationBar(
       selectedIndex: screenIndex,
       onDestinationSelected: (int index) {
+        // Update the current screen when an icon is tapped
         setState(() {
           screenIndex = index;
         });
       },
+      // Dynamically render the nav bar items from a util list. Increases code maintainability.
       destinations: pageDestinations.map((PageDestination page) {
         return NavigationDestination(
           label: page.label,
@@ -138,6 +151,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
 
+  // The Material Side Navigation Drawer
   NavigationDrawer sideNavDrawer() {
     return NavigationDrawer(
       onDestinationSelected: handleScreenChanged,
@@ -150,6 +164,8 @@ class _AppScaffoldState extends State<AppScaffold> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
+        // Rendering the 4 main pages seen in the bottom nav bar. The active
+        // state syncs between both the bottom nav bar and this side drawer
         ...pageDestinations.map((PageDestination destination) {
           return NavigationDrawerDestination(
             label: Text(
@@ -169,6 +185,7 @@ class _AppScaffoldState extends State<AppScaffold> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
+        // Seperate loop to render the nav items related to booking's which behave differently when tapped
         ...bookingDestinations.map((PageDestination destination) {
           return NavigationDrawerDestination(
             label: Text(

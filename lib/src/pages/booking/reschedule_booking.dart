@@ -8,6 +8,7 @@ import '../../components/course/course_tags.dart';
 import '../../components/course/learning_types.dart';
 import '../../util/resolve_header_color.dart';
 
+// This page is the main 'Reschedule Booking' page seen in the side nav drawer
 class RescheduleBooking extends StatefulWidget {
   const RescheduleBooking({super.key});
 
@@ -26,8 +27,10 @@ class _RescheduleBookingState extends State<RescheduleBooking> {
     _fetchMyBookings();
   }
 
+  // Method to fetch the active bookings for the current user
   void _fetchMyBookings() async {
     setState(() => loadingMyBookings = true);
+    // Query to Supabase db, filtering the result to exclude the canceled and completed sessions
     final List myBookingsResponse = await supabase
         .from("user_bookings")
         .select(
@@ -35,6 +38,7 @@ class _RescheduleBookingState extends State<RescheduleBooking> {
         .neq("status", "complete")
         .neq("status", "Cancelled")
         .order("created_at");
+
     setState(() {
       myBookings = myBookingsResponse;
       loadingMyBookings = false;
@@ -51,173 +55,178 @@ class _RescheduleBookingState extends State<RescheduleBooking> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appHeader(),
-        body: Theme(
-          data: ThemeData(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: const Color.fromRGBO(5, 109, 120, 1),
-                ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+      appBar: appHeader(),
+      body: Theme(
+        data: ThemeData(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: const Color.fromRGBO(5, 109, 120, 1),
+              ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
-          child: Column(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("Select a booking to reschedule"),
-                        Divider(),
-                      ],
-                    ),
+        ),
+        child: Column(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text("Select a booking to reschedule"),
+                      Divider(),
+                    ],
                   ),
-                  loadingMyBookings
-                      ? const SizedBox(
-                          width: double.infinity,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color.fromRGBO(5, 109, 120, 1),
-                            ),
+                ),
+
+                // Dynamic rendering with a loading state
+                loadingMyBookings
+                    ? const SizedBox(
+                        width: double.infinity,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color.fromRGBO(5, 109, 120, 1),
                           ),
-                        )
-                      : myBookings.isEmpty && !loadingMyBookings
-                          ? Center(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 50),
-                                  Image.asset("images/empty.png", width: 250),
-                                  const Text("No Bookings to Reschedule")
-                                ],
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: ListView.builder(
-                                itemCount: myBookings.length,
-                                physics: const ScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, index) {
-                                  final course =
-                                      myBookings[index]["sessions"]["courses"];
-                                  return Card(
-                                    color: const Color.fromARGB(
-                                        255, 250, 249, 252),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                // CourseDetail(course: item),
-                                                SelectNewDate(
-                                              course: course,
-                                              bookingId: myBookings[index]
-                                                  ["id"],
-                                            ),
+                        ),
+                      )
+
+                    // Check if there are no active bookings, if there are none display an empty infographic
+                    : myBookings.isEmpty && !loadingMyBookings
+                        ? Center(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 50),
+                                Image.asset("images/empty.png", width: 250),
+                                const Text("No Bookings to Reschedule")
+                              ],
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: ListView.builder(
+                              itemCount: myBookings.length,
+                              physics: const ScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, index) {
+                                final course =
+                                    myBookings[index]["sessions"]["courses"];
+
+                                return Card(
+                                  color:
+                                      const Color.fromARGB(255, 250, 249, 252),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              // CourseDetail(course: item),
+                                              SelectNewDate(
+                                            course: course,
+                                            bookingId: myBookings[index]["id"],
                                           ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              course["image"]!,
-                                              width: 90,
-                                              height: 90,
-                                            ),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  course["title"]!,
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                                Text(
-                                                  myBookings[index]["sessions"]
-                                                      ["start_date"]!,
-                                                  style: const TextStyle(
-                                                      fontSize: 13),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.person,
-                                                      size: 18,
-                                                      color: Color.fromRGBO(
-                                                          139, 147, 151, 1),
-                                                    ),
-                                                    Text(
-                                                      myBookings[index]
-                                                                  ["sessions"]
-                                                              ["user_profile"]
-                                                          ["full_name"]!,
-                                                      style: const TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            139, 147, 151, 1),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.location_on,
-                                                      size: 18,
-                                                      color: Color.fromRGBO(
-                                                          139, 147, 151, 1),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Text(
-                                                      myBookings[index]
-                                                                  ["sessions"]
-                                                              ["courses"]
-                                                          ["location"]!,
-                                                      style: const TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            139, 147, 151, 1),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                LearningTypes(
-                                                  contentTypes: course[
-                                                      "course_learning_types"]!,
-                                                ),
-                                              ],
-                                            )
-                                          ],
                                         ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            course["image"]!,
+                                            width: 90,
+                                            height: 90,
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                course["title"]!,
+                                                style: const TextStyle(
+                                                    fontSize: 18),
+                                              ),
+                                              Text(
+                                                myBookings[index]["sessions"]
+                                                    ["start_date"]!,
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.person,
+                                                    size: 18,
+                                                    color: Color.fromRGBO(
+                                                        139, 147, 151, 1),
+                                                  ),
+                                                  Text(
+                                                    myBookings[index]
+                                                                ["sessions"]
+                                                            ["user_profile"]
+                                                        ["full_name"]!,
+                                                    style: const TextStyle(
+                                                      color: Color.fromRGBO(
+                                                          139, 147, 151, 1),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.location_on,
+                                                    size: 18,
+                                                    color: Color.fromRGBO(
+                                                        139, 147, 151, 1),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Text(
+                                                    myBookings[index]
+                                                                ["sessions"]
+                                                            ["courses"]
+                                                        ["location"]!,
+                                                    style: const TextStyle(
+                                                      color: Color.fromRGBO(
+                                                          139, 147, 151, 1),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              LearningTypes(
+                                                contentTypes: course[
+                                                    "course_learning_types"]!,
+                                              ),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            )
-                ],
-              ),
-            ],
-          ),
-        ));
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

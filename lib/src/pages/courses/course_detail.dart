@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../../util/resolve_header_color.dart';
 
+// Page to show a course in more detail and providing a path to book a session
+// @param course, the course to render, the type comes from the Supabase db schema.
 class CourseDetailPage extends StatefulWidget {
   final Map<String, dynamic> course;
   final bool showBookBtn;
@@ -32,6 +34,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     final contentTypes = widget.course["course_learning_types"]!;
     final quoteText = widget.course["quote_text"]!;
 
+    // This page is pushed onto the navigation stack rather than swapped horizontally so it needs a scaffold.
     return Scaffold(
       appBar: appHeader(),
       body: LayoutBuilder(
@@ -78,6 +81,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
+  // Simple component to render the course title
   Text courseTitle() {
     return Text(
       widget.course["title"]!,
@@ -85,6 +89,8 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
+  // Another simple component to render the course description, using lots of
+  // small seperate components makes my code more maintainable and reusable.
   Column courseDescription() {
     return Column(
       children: [
@@ -99,6 +105,8 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
           padding: const EdgeInsets.all(6),
           child: GestureDetector(
             child: Text(
+              // Dynamically changing the content of the button depending on
+              // if the user is viewing all the content or the clipped version.
               showMore ? "Read less" : "Read more",
               style: const TextStyle(
                 color: Color.fromRGBO(27, 131, 139, 1),

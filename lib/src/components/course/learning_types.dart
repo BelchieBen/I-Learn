@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Component to render the learning types for each course in a list like form.
+// These appear on most course/ booking cards throughout the app
+// @param contentTypes is a List of objects from the database that contain a reference to an image stored in the app bundle
 class LearningTypes extends StatefulWidget {
   final List contentTypes;
   const LearningTypes({super.key, required this.contentTypes});
