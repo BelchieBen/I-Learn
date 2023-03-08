@@ -24,7 +24,7 @@ If you want to setup a local development copy of the application then do the fol
 > NOTE this app was developed using Flutter v3.7.3 and using the new useMaterial3 Theme flag.
 - In a that terminal run `flutter run` and chose to run on either an Android emulator or your Android device
 
-# Using app builds
+# Using App Builds
 
 After every feature I automatically build and release the app, to download one of these releases head to the *Releases* section in the repository and download the latest apk.
 > NOTE this is a debug apk and you will have to manually allow it to be installed as it is not a Google Play certified app.
