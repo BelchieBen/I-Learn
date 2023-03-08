@@ -18,23 +18,28 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final supabase = Supabase.instance.client;
 
+  // Form input values
   String? email;
 
   String? password;
 
   bool isLoading = false;
 
+  // Method to be called when the form submit button is tapped
   void onSubmit() {
-    FocusScope.of(context).requestFocus(new FocusNode());
+    // Dismiss the device keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
     if (LoginPage.loginFormKey.currentState!.validate()) {
       setState(() => isLoading = true);
       LoginPage.loginFormKey.currentState!.save();
       if (_validateValues()) {
+        // Call async function as this method cannot be asynchronous
         _authenticateUser();
       }
     }
   }
 
+  // Async function to autneticate a user with Supabase and set the current user in the device preferences
   void _authenticateUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
@@ -49,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (error) {
+      // If there is an error then display an error snackbar to inform the user
       setState(() => isLoading = false);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -58,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // Helper function to validate the form input values before sending them to Supabase
   bool _validateValues() {
     if (email != null && password != null) {
       return true;
@@ -117,6 +124,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // The Login form with input fields and submit button.
+  // I extracted this component to keep the main build method small and tidy.
   Form loginForm(BuildContext context) {
     return Form(
       key: LoginPage.loginFormKey,
@@ -189,6 +198,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // The error snackbar to display when the user fails to login.
+  // I display a generic message which is helpful to the majority of users
   SnackBar errorSnackbar() {
     return SnackBar(
       backgroundColor: Colors.transparent,

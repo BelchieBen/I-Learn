@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../components/scaffold/app_scaffold.dart';
 import '../../util/resolve_header_color.dart';
 
+// Page to list all session dates available for a course
 class SelectNewDate extends StatefulWidget {
   final Map<String, dynamic> course;
   final int bookingId;
@@ -20,9 +21,11 @@ class SelectNewDate extends StatefulWidget {
 class _SelectNewDateState extends State<SelectNewDate> {
   SupabaseClient supabase = Supabase.instance.client;
   int selectedDateIndex = 0;
+  List dates = [];
+
+  // Loading states
   bool loadingSessions = false;
   bool reschedulingBooking = false;
-  List dates = [];
 
   @override
   void initState() {
@@ -31,6 +34,7 @@ class _SelectNewDateState extends State<SelectNewDate> {
     _fetchCourseSessions(supabase);
   }
 
+  // Method to fetch course sessions from Supabase db using the course id passed to the page
   void _fetchCourseSessions(SupabaseClient supabase) async {
     setState(() => loadingSessions = true);
     final sessions = await supabase
@@ -38,19 +42,24 @@ class _SelectNewDateState extends State<SelectNewDate> {
         .select("*")
         .filter("course_id", "eq", widget.course["id"]!);
 
+    // Updates the sessions list and loading state
     setState(() {
       dates = sessions;
       loadingSessions = false;
     });
   }
 
+  // Method to update a users booking with the new date they selected
   void _rescheduleBooking() async {
     setState(() => reschedulingBooking = true);
+    // Send update request to Supabase db to update the user booking with new date
     final response = await supabase.from("user_bookings").update({
       "session": dates[selectedDateIndex]["id"]!,
     }).match({"id": widget.bookingId});
 
     setState(() => reschedulingBooking = false);
+
+    // Once the update has succeeded show a snackbar to the user and navigate back to the homepage
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         successSnackbar(),
@@ -98,6 +107,7 @@ class _SelectNewDateState extends State<SelectNewDate> {
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
+                    // Dynamic rendering with loading state
                     loadingSessions
                         ? const SizedBox(
                             width: double.infinity,
@@ -108,6 +118,8 @@ class _SelectNewDateState extends State<SelectNewDate> {
                               ),
                             ),
                           )
+
+                        // Also check if we have recieved no available sessions from the db. Show a empty infographic
                         : dates.isEmpty && !loadingSessions
                             ? const SizedBox(
                                 width: double.infinity,
@@ -124,6 +136,9 @@ class _SelectNewDateState extends State<SelectNewDate> {
                                         Radius.circular(12),
                                       ),
                                     ),
+
+                                    // Doing some string manipulation as the dates and times are stored in multiple columns in the db
+                                    // and the format from Supabase is not what I want to display to users
                                     title: Text(dates[index]["start_date"]! +
                                         ": " +
                                         dates[index]["start_time"]!
@@ -157,19 +172,20 @@ class _SelectNewDateState extends State<SelectNewDate> {
                     SizedBox(
                       width: 150,
                       child: ElevatedButton(
-                          onPressed: () {
-                            _rescheduleBooking();
-                          },
-                          child: reschedulingBooking
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text("Reschedule")),
+                        onPressed: () {
+                          _rescheduleBooking();
+                        },
+                        child: reschedulingBooking
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text("Reschedule"),
+                      ),
                     )
                   ],
                 ),
@@ -181,6 +197,8 @@ class _SelectNewDateState extends State<SelectNewDate> {
     );
   }
 
+  // The success snackbar that is shown when a booking is rescheduled successfully.
+  // It is a customised Material snackbar using the Helix colours.
   SnackBar successSnackbar() {
     return SnackBar(
       backgroundColor: Colors.transparent,

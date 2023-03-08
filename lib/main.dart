@@ -19,6 +19,7 @@ Future<void> main() async {
   );
 
   runApp(
+    // Setting up my my global state store
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -52,6 +53,7 @@ Future<void> main() async {
   );
 }
 
+// A widget to display an animated splash screen after the native splash screen and before the app homepage
 class SplashScreen extends StatefulWidget {
   const SplashScreen({required Key key}) : super(key: key);
 
@@ -73,6 +75,9 @@ class _SplashScreenState extends State<SplashScreen>
     _checkCurrentUser();
   }
 
+  // Method to check if a user is authenticated, returns true or false,
+  // it checks the device preferences and the supabase session, if either of
+  // these are valid the function returns true
   _checkCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     SupabaseClient supabase = Supabase.instance.client;

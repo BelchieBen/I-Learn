@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../components/scaffold/app_scaffold.dart';
 import '../../util/resolve_header_color.dart';
 
+// Page on the side nav drawer to allow users to scan a QR code and register thier attendance
 class RegisterAttendance extends StatefulWidget {
   const RegisterAttendance({super.key});
 
@@ -17,6 +18,8 @@ class RegisterAttendance extends StatefulWidget {
 class _RegisterAttendanceState extends State<RegisterAttendance> {
   final SupabaseClient supabase = Supabase.instance.client;
   String _scanBarcode = "Unknown";
+
+  // Loading state
   bool submittingBooking = false;
 
   var loggerNoStack = Logger(
@@ -28,29 +31,37 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
     super.initState();
   }
 
+  // Async method to get the value from a QR code scanned
   Future<void> scanQR() async {
     String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    // Platform messages may fail, so I used a try/catch PlatformException to gracefully handle errors.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.QR);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
+
     if (!mounted) return;
 
+    // Update the QR value in state with the new scanned value
     setState(() {
       _scanBarcode = barcodeScanRes;
     });
 
+    // If the QR code has a value then try and submit a request to register attendance
     if (barcodeScanRes.isNotEmpty) {
-      _submitBooking();
+      _registerAttendance();
     }
   }
 
-  void _submitBooking() async {
+  // Method to register attendance on QR code scan
+  void _registerAttendance() async {
     setState(() => submittingBooking = true);
+
+    // Wrapping the db query in a try/catch in case the user is not booked onto the session they are scanning
     try {
+      // 'Registering Attendance' is marking the booking as complete as they 'Attended' the session
       final response = await supabase
           .from("user_bookings")
           .update({"status": "complete"})
@@ -61,6 +72,7 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
         submittingBooking = false;
       });
       if (context.mounted) {
+        // If the registration succeeded then show a dialog to welcome the user to the session
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -68,6 +80,7 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
             content: Text("You have registered your attendance for " +
                 response["sessions"]["courses"]["title"]),
             actions: [
+              // Close the dialog and navigate to the homepage
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -89,6 +102,7 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
         );
       }
     } catch (e) {
+      // If there was an error update the loading state and show an error snackbar
       setState(() => submittingBooking = false);
       ScaffoldMessenger.of(context).showSnackBar(
         errorSnackbar(),
@@ -153,6 +167,8 @@ class _RegisterAttendanceState extends State<RegisterAttendance> {
     );
   }
 
+  // The error snackbar to be displayed when a registration failed. The snackbar content
+  // is generic as I cannot guarentee the error message from the db is helpful to the user.
   SnackBar errorSnackbar() {
     return SnackBar(
       backgroundColor: Colors.transparent,

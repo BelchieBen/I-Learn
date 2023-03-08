@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Reusable component to render the tags associated with a course
+// @param tags, a List of tags from the database. Each tag is a string
+// @param tagSize, a number which sets the font size of erach tag, useful to fit the tags into varying spaces in the UI
 class CourseTags extends StatefulWidget {
   final List tags;
   final double tagSize;

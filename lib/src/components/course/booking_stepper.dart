@@ -1,11 +1,11 @@
 import 'package:booking_app/src/components/course/course_information.dart';
-import 'package:booking_app/src/components/forms/booking_form.dart';
 import 'package:booking_app/src/components/inputs/text_form_input.dart';
 import 'package:booking_app/src/components/scaffold/app_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// The component which takes the user through the booking journey
 class BookingStepper extends StatefulWidget {
   final Map<String, dynamic> course;
   const BookingStepper({
@@ -21,9 +21,12 @@ class _BookingStepperState extends State<BookingStepper> {
   final supabase = Supabase.instance.client;
   int _index = 0;
   int selectedDateIndex = 0;
+
+  // Loading state
   bool loadingSessions = false;
   bool submittingBooking = false;
 
+  // Form input values
   String? howIdentified;
   String? howApply;
   String? howMeasure;
@@ -43,7 +46,9 @@ class _BookingStepperState extends State<BookingStepper> {
     _fetchCourseSessions(supabase);
   }
 
+  // Method to fetch the availabe session dates for a course
   void _fetchCourseSessions(SupabaseClient supabase) async {
+    // On query start update the loading state so UI can react
     setState(() => loadingSessions = true);
     final sessions = await supabase
         .from("sessions")
@@ -56,6 +61,7 @@ class _BookingStepperState extends State<BookingStepper> {
     });
   }
 
+  // Helper function to validate the form input fields
   bool _assertNotEmpty() {
     if (howIdentified != null && howApply != null && howMeasure != null) {
       return true;
@@ -63,6 +69,7 @@ class _BookingStepperState extends State<BookingStepper> {
     return false;
   }
 
+  // Async method to submit the booking, this will create a record in the db and mark the booking as Pending
   void _submitBooking() async {
     setState(() => submittingBooking = true);
     final response = await supabase.from("user_bookings").insert({
@@ -71,10 +78,13 @@ class _BookingStepperState extends State<BookingStepper> {
       "status": "Pending"
     });
     setState(() => submittingBooking = false);
+
+    // Once booking has succeded show a success snackbar
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         successSnackbar(),
       );
+      // Redirect to the homepage
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -87,6 +97,8 @@ class _BookingStepperState extends State<BookingStepper> {
   @override
   Widget build(BuildContext context) {
     final isLastStep = _index == 2 - 1;
+
+    // Restyle the button colours in line with the Helix styles
     Color getColor(Set<MaterialState> states) {
       const Set<MaterialState> interactiveStates = <MaterialState>{
         MaterialState.pressed,
@@ -173,6 +185,8 @@ class _BookingStepperState extends State<BookingStepper> {
                   padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                   child: dates.isEmpty
                       ? const SizedBox.shrink()
+
+                      // String manipulation to combine multiple db columns into 1 tappable element
                       : Text(dates[selectedDateIndex]["start_date"]! +
                           " " +
                           dates[selectedDateIndex]["start_time"]! +
@@ -226,9 +240,11 @@ class _BookingStepperState extends State<BookingStepper> {
     );
   }
 
+  // Custom component to select a date from the list available
   Column dateSelector() {
     return Column(
       children: [
+        // Show a progress indicator if the dates are loading
         loadingSessions
             ? const SizedBox(
                 width: double.infinity,
@@ -239,6 +255,8 @@ class _BookingStepperState extends State<BookingStepper> {
                   ),
                 ),
               )
+
+            // When there are no dates show a useful message to user
             : dates.isEmpty && !loadingSessions
                 ? const SizedBox(
                     width: double.infinity,

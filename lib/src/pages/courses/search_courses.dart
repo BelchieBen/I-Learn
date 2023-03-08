@@ -38,7 +38,9 @@ class _SearchCoursesState extends State<SearchCourses> {
     _fetchCourseSessions();
   }
 
+  // Method to fetch courses from Supabase db, users can search and filter these results
   void _fetchCourseSessions() async {
+    // Using a loading state to control when to show a progress indicator
     setState(() => loadingCourses = true);
     final List<
         Map<String,
@@ -50,7 +52,10 @@ class _SearchCoursesState extends State<SearchCourses> {
     });
   }
 
+  // Method to sort the courses array when the user taps on a sort by element
   void _handleSort(String sortBy) {
+    // Create a copy of the courses array, its best practice not to multate
+    // the array directly as its state controlled
     List<Map<String, dynamic>> coursesCopy = courses;
 
     switch (sortBy) {
@@ -64,16 +69,19 @@ class _SearchCoursesState extends State<SearchCourses> {
         coursesCopy
             .sort((a, b) => (b['created_at']).compareTo(a['created_at']));
         break;
+      // Default case will be applied on sort by Revelence and simply re-orders the list
       default:
         coursesCopy.shuffle();
         break;
     }
 
+    // Updating the state with the new sorted list
     setState(() {
       courses = coursesCopy;
     });
   }
 
+  // List for the items seen in the sort bottom sheet
   final sortFilters = [
     {"icon": Icons.keyboard_double_arrow_up, "sortBy": "Relevence"},
     {"icon": Icons.arrow_downward, "sortBy": "Name Descending"},
@@ -81,12 +89,14 @@ class _SearchCoursesState extends State<SearchCourses> {
     {"icon": Icons.notification_add_outlined, "sortBy": "Recently Added"},
   ];
 
+  // List for the items seen in the course filter dropdown filter
   final List<String> courseType = [
     'In Person',
     'Online MS Teams',
     'Pre-Recorded',
   ];
 
+  // List for the items seen in the course category dropdown filter
   final List<String> courseCategory = [
     'Technical',
     'Collaboration',
@@ -95,17 +105,20 @@ class _SearchCoursesState extends State<SearchCourses> {
     'Health & Safety',
   ];
 
+  // List for the items seen in the course level dropdown filter
   final List<String> level = [
     'Beginner',
     'Advanced',
     'Expert',
   ];
 
+  // List for the items seen in the mandatory dropdown filter
   final List<String> mandatory = [
     'Mandatory',
     'Optional',
   ];
 
+  // State to show which value has been selected for filtering
   String? selectedValue;
 
   @override
@@ -131,6 +144,8 @@ class _SearchCoursesState extends State<SearchCourses> {
                   ),
                 ),
               ),
+
+              // Get the isSearching state from global state then decide which page to render
               child: context.watch<Searching>().isSearching
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +186,10 @@ class _SearchCoursesState extends State<SearchCourses> {
     );
   }
 
+  // Small component to show text displaying what the user is searching for.
   Padding searchResultsText() {
+    // Binding this value to global state and watching for changes to upldate
+    // component as user is searching
     String searchTerm = context.watch<SearchTerm>().searchTerm;
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
@@ -187,6 +205,8 @@ class _SearchCoursesState extends State<SearchCourses> {
     );
   }
 
+  // Component to render the buttons 'Sort' & 'Filter', I extracted these into a
+  // component so I could resuse it between the two sub pages for this overall page
   Builder filterButtons() {
     final int courseCount = courses.length;
     return Builder(builder: (context) {
@@ -223,6 +243,8 @@ class _SearchCoursesState extends State<SearchCourses> {
     });
   }
 
+  // Component to render the horizontal list of filters, I extracted these into a seperate
+  // component so I could resuse it between the two sub pages in this page
   Padding searchFilters() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
@@ -304,12 +326,14 @@ class _SearchCoursesState extends State<SearchCourses> {
     );
   }
 
+  // The standard view for displaying all courses to the user, only visible when the user is not searching
   ListView coursesListView() {
     return ListView.builder(
       itemCount: courses.length,
       physics: const ScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (BuildContext context, index) {
+        // Creating a local variable to reference to increase readability when referencing the course properties
         final course = courses[index];
         return Card(
           color: const Color.fromARGB(255, 250, 249, 252),
@@ -367,11 +391,16 @@ class _SearchCoursesState extends State<SearchCourses> {
     );
   }
 
+  // This view is to display the course list when filtered by the user when free text searching.
+  // It has a different return type as the component needs to listen to updates to global state.
   Consumer filteredCoursesListView() {
     return Consumer<SearchTerm>(
       builder: (context, model, child) {
         List<Map<String, dynamic>> filtered = [];
         if (model.searchTerm != "") {
+          // While the user is entering text to search by, filter the master course list for items which
+          // contain the users search term. Using contain allows error tollerance for the user.
+          // They could enter an incomplete term and still recieve results.
           filtered = courses
               .where(
                 (element) => element["title"]!.toLowerCase().contains(
@@ -444,6 +473,7 @@ class _SearchCoursesState extends State<SearchCourses> {
     );
   }
 
+  // Component to show the 'sort by' bottom sheet, this is a native Material 3 component with a custom colour scheme.
   void _settingModalBottomSheet(context) {
     showBottomSheet(
         context: context,
@@ -484,6 +514,7 @@ class _SearchCoursesState extends State<SearchCourses> {
                     Spacer(),
                   ],
                 ),
+                // Loop through the list of 'sort by' filters, making the component reusable and maintainable
                 for (var sort in sortFilters)
                   ListTile(
                     leading: Icon(sort["icon"]! as IconData?),

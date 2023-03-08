@@ -1,5 +1,3 @@
-import 'package:booking_app/src/pages/about/about_ld.dart';
-import 'package:booking_app/src/pages/about/contact_ld.dart';
 import 'package:booking_app/src/pages/account.dart';
 import 'package:booking_app/src/pages/booking/cancel_booking.dart';
 import 'package:booking_app/src/pages/home.dart';
@@ -9,6 +7,7 @@ import 'package:booking_app/src/pages/booking/reschedule_booking.dart';
 import 'package:booking_app/src/pages/courses/search_courses.dart';
 import 'package:flutter/material.dart';
 
+// A List of pages which are used in the App Scaffold to navigate between
 final List<Widget> pages = <Widget>[
   const Home(),
   const SearchCourses(),
@@ -17,10 +16,9 @@ final List<Widget> pages = <Widget>[
   const RegisterAttendance(),
   const RescheduleBooking(),
   const CancelBooking(),
-  const AboutLD(),
-  const ContactLD(),
 ];
 
+// Helper class to define the type when a page is added to navigation widgets
 class PageDestination {
   const PageDestination(this.label, this.icon, this.selectedIcon);
 

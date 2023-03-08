@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Component to render the table on each Course Detail Page, showing the course learning types and thier sourses
 class SelfDirectedLearningTable extends StatefulWidget {
   const SelfDirectedLearningTable({super.key});
 

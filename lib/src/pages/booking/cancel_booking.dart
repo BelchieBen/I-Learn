@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../util/resolve_header_color.dart';
 
+// Page to view a list of active bookings and cancel the sessions
 class CancelBooking extends StatefulWidget {
   const CancelBooking({super.key});
 
@@ -23,6 +24,7 @@ class _CancelBooking extends State<CancelBooking> {
     _fetchMyBookings();
   }
 
+  // Method to fetch the current users active bookings
   void _fetchMyBookings() async {
     setState(() => loadingMyBookings = true);
     final List myBookingsResponse = await supabase
@@ -38,8 +40,9 @@ class _CancelBooking extends State<CancelBooking> {
     });
   }
 
+  // Method to cancel a booking, I do a 'soft delete' on
+  // the booking so users can still see/ reschedule the session.
   _cancelBooking(id) async {
-    print(id);
     await supabase
         .from("user_bookings")
         .update({"status": "Cancelled"}).match({"id": id});
@@ -122,6 +125,7 @@ class _CancelBooking extends State<CancelBooking> {
                                   ),
                                   child: InkWell(
                                     onTap: () {
+                                      // Display a popup dialog to make the user confirm the cancellation
                                       showDialog<String>(
                                         context: context,
                                         builder: (BuildContext context) =>

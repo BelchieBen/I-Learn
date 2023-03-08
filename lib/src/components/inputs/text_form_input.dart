@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Creating a custom type for calling setState in the parent widget
 typedef StringCallback = void Function(String? val);
 
+// Custom component to display a text field that complies with the Helix guidelines
 class TextFormInput extends StatefulWidget {
   final String labelText;
   final int numLines;
@@ -34,6 +36,7 @@ class _TextFormInputState extends State<TextFormInput> {
             child: Text(widget.labelText),
           ),
           TextFormField(
+            // Change the helper text if the text field has hidden text (only used for passwords)
             validator: widget.obscureText
                 ? (String? value) {
                     if (value == null || value.length < 6)
@@ -44,6 +47,7 @@ class _TextFormInputState extends State<TextFormInput> {
                       return "This field is required";
                   },
             onSaved: (String? value) {
+              // Call the parents setState method to access the value entered
               widget.setValue(value);
             },
             obscureText: widget.obscureText,

@@ -1,11 +1,7 @@
-// ignore_for_file: slash_for_doc_comments
-
 import 'package:flutter/material.dart';
 import '../inputs/text_form_input.dart';
 
-/**
- * The text fields and submit button on the last step of the booking process
- */
+// The text fields and submit button on the last step of the booking process
 class BookingForm extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   const BookingForm({super.key, required this.formKey});
@@ -15,12 +11,14 @@ class BookingForm extends StatefulWidget {
 }
 
 class _BookingFormState extends State<BookingForm> {
+  // Form input values
   String? howIdentified;
   String? howApply;
   String? howMeasure;
 
   @override
   Widget build(BuildContext context) {
+    // Create custom colours to match the Helix guidlines for each interactive state
     Color getColor(Set<MaterialState> states) {
       const Set<MaterialState> interactiveStates = <MaterialState>{
         MaterialState.pressed,

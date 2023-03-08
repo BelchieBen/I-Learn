@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
+// Component to render the card seen in the account page which shows users progression on a course.
 class LearningPathwayCard extends StatelessWidget {
   final Map<String, dynamic> course;
   const LearningPathwayCard({super.key, required this.course});
@@ -54,6 +55,7 @@ class LearningPathwayCard extends StatelessWidget {
     );
   }
 
+  // A custom stepper themed like Helix and used a third party libary for the base step structure
   StepProgressIndicator learningPathwayProgression(
       Map<String, dynamic> course) {
     return StepProgressIndicator(

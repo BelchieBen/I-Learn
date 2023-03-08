@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Page to display all bookings associated with a user
 class MyBookings extends StatefulWidget {
   const MyBookings({super.key});
 
@@ -28,20 +29,25 @@ class _MyBookingState extends State<MyBookings> {
     _fetchMyBookings(supabase);
   }
 
+  // Method to fetch bookings for the current user
   void _fetchMyBookings(SupabaseClient supabase) async {
     setState(() => loadingMyBookings = true);
+    // Conditional to change the db query depending if the user wants to see thier cancelled bookings
     if (showCancelled) {
+      // Supabase db query to retrieve users cancelled bookings and active bookings
       final List myBookingsResponse = await supabase
           .from("user_bookings")
           .select(
               "*, sessions(*,user_profile(*) ,courses(*,course_tags(id,tags(tag)), course_learning_types(id, learning_types(learning_type))))")
           .neq("status", "complete")
           .order("created_at");
+
       setState(() {
         myBookings = myBookingsResponse;
         loadingMyBookings = false;
       });
     } else {
+      // Supabase db query to retrieve users active bookings
       final List myBookingsResponse = await supabase
           .from("user_bookings")
           .select(
@@ -56,6 +62,7 @@ class _MyBookingState extends State<MyBookings> {
     }
   }
 
+  // Method to get the colour of the status label depending on the status
   Color getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case "approved":
@@ -71,6 +78,7 @@ class _MyBookingState extends State<MyBookings> {
     }
   }
 
+  // Method to cancel a booking, called when the cancel button is tapped on a bookoing card.
   _cancelBooking(id) async {
     await supabase
         .from("user_bookings")
@@ -105,6 +113,7 @@ class _MyBookingState extends State<MyBookings> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 myBookingsHeading(),
+                // Dynamic rendering with loading state
                 loadingMyBookings
                     ? const SizedBox(
                         height: 50,
@@ -117,6 +126,7 @@ class _MyBookingState extends State<MyBookings> {
                         ),
                       )
                     : const SizedBox.shrink(),
+                // Check if there are no bookings, if so display empty infographic
                 myBookings.isEmpty && !loadingMyBookings
                     ? SizedBox(
                         width: double.infinity,
@@ -142,6 +152,8 @@ class _MyBookingState extends State<MyBookings> {
     });
   }
 
+  // Component to display the page title, divider and button to toggle
+  // between showing cancelled bookings and only active bookings
   Padding myBookingsHeading() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
